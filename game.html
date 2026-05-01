@@ -433,7 +433,6 @@ body {
 
 <script>
 // ═══ 全域狀態 ═══
-let PASSWORD = "";
 let DRAGON_MOODS = [
   "💚 心情平靜",
   "💙 專注工作",
@@ -456,12 +455,12 @@ function doLogin() {
   fetch("/api/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify({ password: pwd })
   })
   .then(r => r.json())
   .then(d => {
     if (d.ok) {
-      PASSWORD = pwd;
       document.getElementById("login-screen").style.display = "none";
       document.getElementById("game-screen").style.display = "block";
       loadStatus();
@@ -476,12 +475,8 @@ function doLogin() {
 }
 
 // ═══ 載入狀態 ═══
-function authHeaders() {
-  return { "X-Password": PASSWORD };
-}
-
 function loadStatus() {
-  fetch("/api/status", { headers: authHeaders() })
+  fetch("/api/status", { credentials: "include" })
     .then(r => r.json())
     .then(d => {
       document.getElementById("dragon-status").textContent = d.status;
@@ -497,7 +492,7 @@ function loadStatus() {
 function useSkill(skill) {
   fetch(`/api/skill/${skill}`, {
     method: "POST",
-    headers: authHeaders()
+    credentials: "include"
   })
   .then(r => r.json())
   .then(d => {
@@ -522,7 +517,8 @@ function sendMsg() {
 
   fetch("/api/chat", {
     method: "POST",
-    headers: { ...authHeaders(), "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify({ message: msg })
   })
   .then(r => r.json())
