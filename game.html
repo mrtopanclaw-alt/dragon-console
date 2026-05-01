@@ -420,6 +420,19 @@ body {
       <div class="console-output" id="console-out">🐉 等待指令...</div>
     </div>
 
+    <!-- 直播視角 -->
+    <div class="panel" id="live-panel" style="display:none;grid-column:1/-1;">
+      <div class="panel-title">📺 直播視角 <span id="live-status" style="color:#666;font-size:10px;">● 待機中</span></div>
+      <div style="position:relative;">
+        <img id="live-img" src="" style="width:100%;border-radius:8px;border:1px solid #1c1c30;display:block;background:#06060e;">
+        <div id="live-offline" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#444;font-size:14px;pointer-events:none;">📺 直播畫面</div>
+      </div>
+      <div style="margin-top:8px;display:flex;align-items:center;gap:8px;">
+        <button class="send-btn" id="live-toggle" onclick="toggleLive()">開啟直播</button>
+        <input type="text" id="live-url" placeholder="http://localhost:5177/api/screenshot" value="http://localhost:5177/api/screenshot" style="flex:1;background:#0a0a18;border:1px solid #222;border-radius:6px;padding:8px 12px;color:#888;font-size:12px;">
+      </div>
+    </div>
+
   </div>
 
   <!-- 底部導航 -->
@@ -428,6 +441,7 @@ body {
     <button class="nav-btn" onclick="switchTab('status')">狀態</button>
     <button class="nav-btn" onclick="switchTab('skills')">技能</button>
     <button class="nav-btn" onclick="switchTab('log')">日誌</button>
+    <button class="nav-btn" onclick="showLivePanel();this.classList.add('active')">📺 直播</button>
   </div>
 </div>
 
@@ -561,6 +575,38 @@ startMonologue();
 function switchTab(tab) {
   document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
   event.target.classList.add("active");
+}
+
+// ═══ 直播視角 ═══
+let liveOn = false;
+let liveTimer = null;
+
+function toggleLive() {
+  if (!liveOn) {
+    const url = document.getElementById("live-url").value.trim();
+    if (!url) return;
+    document.getElementById("live-img").src = url + "?t=" + Date.now();
+    liveOn = true;
+    document.getElementById("live-toggle").textContent = "關閉直播";
+    document.getElementById("live-status").textContent = "● 直播中";
+    document.getElementById("live-status").style.color = "#4f4";
+    document.getElementById("live-offline").style.display = "none";
+    liveTimer = setInterval(() => {
+      document.getElementById("live-img").src = url + "?t=" + Date.now();
+    }, 3000);
+  } else {
+    liveOn = false;
+    clearInterval(liveTimer);
+    document.getElementById("live-toggle").textContent = "開啟直播";
+    document.getElementById("live-status").textContent = "● 待機中";
+    document.getElementById("live-status").style.color = "#666";
+    document.getElementById("live-offline").style.display = "flex";
+    document.getElementById("live-img").src = "";
+  }
+}
+
+function showLivePanel() {
+  document.getElementById("live-panel").style.display = "block";
 }
 </script>
 

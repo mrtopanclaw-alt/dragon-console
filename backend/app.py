@@ -139,6 +139,15 @@ def dragons():
         ]
     })
 
+# ── 直播截圖 ──────────────────────────────────────
+@app.route("/api/screenshot")
+def screenshot():
+    import os
+    path = os.path.join(os.path.dirname(__file__), "live.jpg")
+    if os.path.exists(path):
+        return send_from_directory(os.path.dirname(path), "live.jpg", mimetype="image/jpeg")
+    return jsonify({"error": "No screenshot yet"}), 404
+
 # ── 健康檢查 ──────────────────────────────────────
 @app.route("/health")
 def health():
