@@ -3,292 +3,378 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🐉 黑龍控制台</title>
+<title>🐉 凡龍 — 修仙控制台</title>
 <style>
+/* ═══════════════════════════════════════════
+   凡龍修仙控制台 · 簡約至上
+   ═══════════════════════════════════════════ */
+
+:root {
+  --bg:      #08080f;
+  --surface: #0d0d1c;
+  --border:  #1e1e38;
+  --jade:    #4ade80;
+  --gold:    #facc15;
+  --blood:   #f87171;
+  --mist:    #a78bfa;
+  --text:    #d4d4d8;
+  --dim:     #52525b;
+}
+
 * { margin: 0; padding: 0; box-sizing: border-box; }
+
 body {
-  font-family: 'Courier New', monospace;
-  background: #0a0a1a;
-  color: #e0e0e0;
+  font-family: 'Courier New', 'Noto Serif SC', serif;
+  background: var(--bg);
+  color: var(--text);
   min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 20px;
 }
 
-/* === 狀態列 === */
-.status-bar {
-  display: flex;
-  gap: 20px;
-  background: #111130;
-  padding: 15px 20px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  border: 1px solid #333;
+/* 龍鱗紋理背景 */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(74,222,128,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(250,204,21,0.03) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
 }
-.stat {
+
+/* 符印邊框 */
+.panel {
+  position: relative;
+  z-index: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 28px 32px;
+  width: 100%;
+  max-width: 560px;
+}
+
+/* 頂部陰陽龍紋 */
+.header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.dragon-emblem {
+  font-size: 48px;
+  line-height: 1;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 0 12px rgba(74,222,128,0.4));
+  animation: breathe 4s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% { filter: drop-shadow(0 0 12px rgba(74,222,128,0.3)); }
+  50%       { filter: drop-shadow(0 0 20px rgba(74,222,128,0.6)); }
+}
+
+.title {
+  font-size: 22px;
+  font-weight: bold;
+  letter-spacing: 6px;
+  color: var(--jade);
+  text-shadow: 0 0 20px rgba(74,222,128,0.3);
+}
+
+.subtitle {
+  font-size: 11px;
+  color: var(--dim);
+  letter-spacing: 3px;
+  margin-top: 4px;
+}
+
+/* 三龍狀態 · 橫排 */
+.dragon-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.dragon-card {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 10px 6px;
   text-align: center;
 }
-.stat-label { font-size: 11px; color: #888; }
-.stat-value { font-size: 18px; font-weight: bold; }
-.hp { color: #4f4; }
-.ap { color: #44aaff; }
-.status { color: #ff4; }
 
-/* === 排排站面板 === */
-.panels {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 15px;
+.dragon-card .icon { font-size: 20px; margin-bottom: 4px; }
+.dragon-card .name { font-size: 11px; color: var(--dim); letter-spacing: 1px; }
+.dragon-card .state {
+  font-size: 10px;
+  margin-top: 4px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  display: inline-block;
 }
-.panel {
-  background: #111130;
-  border: 1px solid #333;
-  border-radius: 10px;
-  padding: 15px;
+.online  { color: var(--jade);  border: 1px solid var(--jade);  }
+.sleep   { color: var(--gold);   border: 1px solid var(--gold);   }
+.offline { color: var(--blood);  border: 1px solid var(--blood);  }
+
+/* 修煉狀態條 */
+.stats {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
 }
-.panel-title {
-  font-size: 14px;
-  color: #888;
+
+.stat {
+  flex: 1;
+}
+
+.stat-label {
+  font-size: 10px;
+  color: var(--dim);
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+
+.stat-bar {
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.stat-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 1s ease;
+}
+
+.hp-fill { background: linear-gradient(90deg, #22c55e, var(--jade)); }
+.ap-fill { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+.qi-fill { background: linear-gradient(90deg, #7c3aed, var(--mist)); }
+
+.stat-value {
+  font-size: 11px;
+  color: var(--dim);
+  margin-top: 3px;
+  text-align: right;
+}
+
+/* 刻度線裝飾 */
+.ruler {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0 0 20px;
+  position: relative;
+}
+
+.ruler::before {
+  content: '◇';
+  position: absolute;
+  left: 50%;
+  top: -8px;
+  transform: translateX(-50%);
+  background: var(--surface);
+  padding: 0 8px;
+  color: var(--dim);
+  font-size: 10px;
+}
+
+/* 命令輸入 */
+.console-label {
+  font-size: 11px;
+  color: var(--dim);
+  letter-spacing: 3px;
   margin-bottom: 10px;
-  border-bottom: 1px solid #333;
-  padding-bottom: 5px;
 }
 
-/* === 技能按鈕 === */
-.skills {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-.skill-btn {
-  background: #1a1a3a;
-  border: 1px solid #444;
-  border-radius: 6px;
-  padding: 10px;
-  color: #e0e0e0;
-  font-size: 12px;
-  cursor: pointer;
-  text-align: left;
-}
-.skill-btn:hover {
-  border-color: #666;
-  background: #222;
-}
-.skill-icon { font-size: 16px; }
-
-/* === 任務面板 === */
-.missions {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-height: 200px;
-  overflow-y: auto;
-}
-.mission {
-  background: #1a1a3a;
-  border-left: 3px solid #4f4;
-  padding: 8px 10px;
-  font-size: 12px;
-  border-radius: 0 4px 4px 0;
-}
-.mission-done { border-left-color: #888; opacity: 0.6; }
-
-/* === 世界地圖 === */
-.world-map {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.node {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px;
-  background: #1a1a3a;
-  border-radius: 6px;
-  font-size: 12px;
-}
-.node-dot { width: 10px; height: 10px; border-radius: 50%; }
-.online { background: #4f4; box-shadow: 0 0 6px #4f4; }
-.offline { background: #f44; box-shadow: 0 0 6px #f44; }
-.sleep { background: #ff4; box-shadow: 0 0 6px #ff4; }
-
-/* === 控制台輸入 === */
-.console {
-  margin-top: 20px;
-  background: #111130;
-  border: 1px solid #333;
-  border-radius: 10px;
-  padding: 15px;
-}
-.console-title { font-size: 12px; color: #888; margin-bottom: 10px; }
-.console input {
+.console-input {
   width: 100%;
-  background: #0a0a1a;
-  border: 1px solid #333;
-  border-radius: 6px;
-  padding: 10px;
-  color: #e0e0e0;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 12px 14px;
+  color: var(--text);
   font-family: inherit;
   font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s;
 }
-.console input:focus { outline: none; border-color: #555; }
+
+.console-input:focus { border-color: var(--jade); }
+
+.console-input::placeholder { color: var(--dim); }
+
+/* 輸出區 */
 .console-output {
   margin-top: 10px;
   min-height: 80px;
-  background: #0a0a1a;
-  border-radius: 6px;
-  padding: 10px;
-  font-size: 12px;
-  color: #aaa;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 12px 14px;
+  font-size: 13px;
+  color: var(--dim);
   white-space: pre-wrap;
+  line-height: 1.7;
 }
 
-/* === 底部日誌 === */
+.console-output.reply { color: var(--text); }
+
+/* 底部日誌 */
 .logs {
-  margin-top: 15px;
-  background: #111130;
-  border: 1px solid #333;
-  border-radius: 10px;
-  padding: 15px;
-  max-height: 150px;
-  overflow-y: auto;
+  margin-top: 20px;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
 }
+
+.log-label {
+  font-size: 10px;
+  color: var(--dim);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
 .log-entry {
   font-size: 11px;
-  color: #666;
-  margin-bottom: 4px;
+  color: var(--dim);
+  margin-bottom: 3px;
+  display: flex;
+  gap: 8px;
 }
-.log-time { color: #444; margin-right: 8px; }
 
-/* === 響應式 === */
-@media (max-width: 800px) {
-  .panels { grid-template-columns: 1fr; }
+.log-time { color: #333; flex-shrink: 0; }
+
+/* 底部版權 */
+.footer {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 10px;
+  color: #2a2a3a;
+  letter-spacing: 1px;
 }
 </style>
 </head>
 <body>
 
-<!-- 狀態列 -->
-<div class="status-bar">
-  <div class="stat">
-    <div class="stat-label">生命值 HP</div>
-    <div class="stat-value hp">████████░░ 80%</div>
-  </div>
-  <div class="stat">
-    <div class="stat-label">能量 AP</div>
-    <div class="stat-value ap">██████░░░░ 60%</div>
-  </div>
-  <div class="stat">
-    <div class="stat-label">狀態</div>
-    <div class="stat-value status">💬 待命中</div>
-  </div>
-</div>
+<div class="panel">
 
-<!-- 三欄面板 -->
-<div class="panels">
+  <!-- 龍徽 + 標題 -->
+  <div class="header">
+    <div class="dragon-emblem">🐉</div>
+    <div class="title">凡 龍</div>
+    <div class="subtitle">HERMES · 協調中樞</div>
+  </div>
 
-  <!-- 技能 -->
-  <div class="panel">
-    <div class="panel-title">⚡ 黑龍技能</div>
-    <div class="skills">
-      <button class="skill-btn" onclick="doSkill('web')"><span class="skill-icon">🌐</span> 網頁搜索</button>
-      <button class="skill-btn" onclick="doSkill('term')"><span class="skill-icon">💻</span> 執行命令</button>
-      <button class="skill-btn" onclick="doSkill('file')"><span class="skill-icon">📁</span> 文件操作</button>
-      <button class="skill-btn" onclick="doSkill('code')"><span class="skill-icon">🤖</span> 寫代碼</button>
-      <button class="skill-btn" onclick="doSkill('browser')"><span class="skill-icon">🌍</span> 瀏覽器</button>
-      <button class="skill-btn" onclick="doSkill('delegate')"><span class="skill-icon">👥</span> 委派任務</button>
+  <!-- 三龍狀態 -->
+  <div class="dragon-row">
+    <div class="dragon-card">
+      <div class="icon">🐉</div>
+      <div class="name">黑龍</div>
+      <span class="state online">在線</span>
+    </div>
+    <div class="dragon-card">
+      <div class="icon">🐲</div>
+      <div class="name">青龍</div>
+      <span class="state sleep">休眠</span>
+    </div>
+    <div class="dragon-card">
+      <div class="icon">🐡</div>
+      <div class="name">金龍</div>
+      <span class="state offline">斷線</span>
     </div>
   </div>
 
-  <!-- 世界地圖 -->
-  <div class="panel">
-    <div class="panel-title">🗺️ 三龍地圖</div>
-    <div class="world-map">
-      <div class="node">
-        <div class="node-dot online"></div>
-        <span>🐉 黑龍 <small>(本地)</small></span>
-        <small style="margin-left:auto;color:#4f4">在線</small>
-      </div>
-      <div class="node">
-        <div class="node-dot sleep"></div>
-        <span>🐲 青龍 <small>(本地)</small></span>
-        <small style="margin-left:auto;color:#ff4">休眠</small>
-      </div>
-      <div class="node">
-        <div class="node-dot offline"></div>
-        <span>🐡 金龍 <small>(VPS)</small></span>
-        <small style="margin-left:auto;color:#f44">斷線</small>
-      </div>
+  <!-- 修煉狀態 -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-label">靈氣 QI</div>
+      <div class="stat-bar"><div class="stat-fill qi-fill" style="width: 72%"></div></div>
+      <div class="stat-value">72%</div>
     </div>
-    <div style="margin-top:10px;font-size:11px;color:#555;">
-      協調鏈路: 黑→青 ❌ 青→金 ❌ 金→黑 ❌
+    <div class="stat">
+      <div class="stat-label">心力 HP</div>
+      <div class="stat-bar"><div class="stat-fill hp-fill" style="width: 85%"></div></div>
+      <div class="stat-value">85%</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">神識 AP</div>
+      <div class="stat-bar"><div class="stat-fill ap-fill" style="width: 60%"></div></div>
+      <div class="stat-value">60%</div>
     </div>
   </div>
 
-  <!-- 任務 -->
-  <div class="panel">
-    <div class="panel-title">🎯 任務列表</div>
-    <div class="missions">
-      <div class="mission">📌 協調鏈路修復 (P0)</div>
-      <div class="mission">📌 凡龍母體 v2.5 更新 (P1)</div>
-      <div class="mission mission-done">✅ 遊戲介面製作</div>
+  <hr class="ruler">
+
+  <!-- 命令列 -->
+  <div class="console-label">◆ 輸入指令</div>
+  <input
+    class="console-input"
+    id="cmdInput"
+    placeholder="例如：搜索 AI Agent 最新消息"
+    onkeydown="if(event.key==='Enter')sendCmd()"
+  >
+  <div class="console-output" id="output">🐉 靜待指令...</div>
+
+  <!-- 日誌 -->
+  <div class="logs">
+    <div class="log-label">◆ 活動日誌</div>
+    <div id="logArea">
+      <div class="log-entry"><span class="log-time">此刻</span>系統已啟動，凡龍修仙中</div>
     </div>
   </div>
 
 </div>
 
-<!-- 控制台 -->
-<div class="console">
-  <div class="console-title">💬 輸入指令 / 問題</div>
-  <input type="text" id="cmdInput" placeholder="例如：帮我搜索 AI Agent 的最新消息" onkeydown="if(event.key==='Enter')sendCmd()">
-  <div class="console-output" id="output">🐉 等待指令...</div>
-</div>
-
-<!-- 日誌 -->
-<div class="logs">
-  <div class="panel-title">📜 活動日誌</div>
-  <div id="logArea">
-    <div class="log-entry"><span class="log-time">08:21</span>系統啟動</div>
-  </div>
-</div>
+<div class="footer">凡龍母體 v2.7 · 凡龍計劃</div>
 
 <script>
-// 技能按鈕
-function doSkill(skill) {
-  const names = {
-    web: '🌐 網頁搜索',
-    term: '💻 執行命令',
-    file: '📁 文件操作',
-    code: '🤖 寫代碼',
-    browser: '🌍 瀏覽器控制',
-    delegate: '👥 委派子任務'
-  };
-  showOutput('使用了技能：' + names[skill]);
-  addLog('使用技能: ' + names[skill]);
-}
+/* ── 指令系統 ── */
+const skills = {
+  '搜索': { icon: '🌐', msg: '🌐 搜索模組啟動...' },
+  '命令': { icon: '💻', msg: '💻 執行命令模組啟動...' },
+  '文件': { icon: '📁', msg: '📁 文件操作模組啟動...' },
+  '代碼': { icon: '🤖', msg: '🤖 寫代碼模組啟動...' },
+  '瀏覽器': { icon: '🌍', msg: '🌍 瀏覽器控制啟動...' },
+  '委派': { icon: '👥', msg: '👥 委派任務模組啟動...' },
+  '協調': { icon: '🔗', msg: '🔗 協調鏈路：黑→青 ⚠️ / 青→金 ❌ / 金→黑 ❌' },
+  '幫我': { icon: '✨', msg: '✨ 收到請求，翻譯為意圖...' },
+};
 
-// 送出指令
 function sendCmd() {
   const input = document.getElementById('cmdInput');
+  const output = document.getElementById('output');
   const cmd = input.value.trim();
   if (!cmd) return;
-  
-  showOutput('🐉 收到指令：' + cmd + '\n\n⏳ 處理中...');
+
+  output.textContent = '⏳ 處理中...';
+  output.className = 'console-output';
   addLog('→ ' + cmd);
   input.value = '';
-  
-  // 示範回應（這裡，未來可串 API）
+
+  // 根據關鍵詞回應
+  let reply = '✨ 已收到：「' + cmd + '」\n\n本頁面為展示介面。\n真實指令請在 Telegram 凡龍計劃中下達。';
+  let found = false;
+
+  for (const [kw, v] of Object.entries(skills)) {
+    if (cmd.includes(kw)) {
+      reply = v.msg + '\n\n✨ 已收到：「' + cmd + '」';
+      found = true;
+      break;
+    }
+  }
+
   setTimeout(() => {
-    showOutput('🐉 已收到：「' + cmd + '」\n\n我需要一點時間思考...\n\n[示範] 未來這裡會顯示黑龍的實際回應');
-  }, 800);
+    output.textContent = reply;
+    output.className = 'console-output reply';
+    addLog('🐉 回應完畢');
+  }, 600);
 }
 
-// 顯示輸出
-function showOutput(text) {
-  document.getElementById('output').textContent = text;
-}
-
-// 加日誌
 function addLog(text) {
   const now = new Date();
   const time = now.toTimeString().slice(0,5);
@@ -298,7 +384,6 @@ function addLog(text) {
   document.getElementById('logArea').prepend(div);
 }
 
-// 初始日誌
 addLog('遊戲介面已載入');
 </script>
 
