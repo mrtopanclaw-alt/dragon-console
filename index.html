@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐉 黑龍控制台</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Courier New', monospace;
+  background: #0a0a1a;
+  color: #e0e0e0;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* === 狀態列 === */
+.status-bar {
+  display: flex;
+  gap: 20px;
+  background: #111130;
+  padding: 15px 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #333;
+}
+.stat {
+  text-align: center;
+}
+.stat-label { font-size: 11px; color: #888; }
+.stat-value { font-size: 18px; font-weight: bold; }
+.hp { color: #4f4; }
+.ap { color: #44aaff; }
+.status { color: #ff4; }
+
+/* === 排排站面板 === */
+.panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 15px;
+}
+.panel {
+  background: #111130;
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 15px;
+}
+.panel-title {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 5px;
+}
+
+/* === 技能按鈕 === */
+.skills {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.skill-btn {
+  background: #1a1a3a;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 10px;
+  color: #e0e0e0;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: left;
+}
+.skill-btn:hover {
+  border-color: #666;
+  background: #222;
+}
+.skill-icon { font-size: 16px; }
+
+/* === 任務面板 === */
+.missions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+.mission {
+  background: #1a1a3a;
+  border-left: 3px solid #4f4;
+  padding: 8px 10px;
+  font-size: 12px;
+  border-radius: 0 4px 4px 0;
+}
+.mission-done { border-left-color: #888; opacity: 0.6; }
+
+/* === 世界地圖 === */
+.world-map {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.node {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  background: #1a1a3a;
+  border-radius: 6px;
+  font-size: 12px;
+}
+.node-dot { width: 10px; height: 10px; border-radius: 50%; }
+.online { background: #4f4; box-shadow: 0 0 6px #4f4; }
+.offline { background: #f44; box-shadow: 0 0 6px #f44; }
+.sleep { background: #ff4; box-shadow: 0 0 6px #ff4; }
+
+/* === 控制台輸入 === */
+.console {
+  margin-top: 20px;
+  background: #111130;
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 15px;
+}
+.console-title { font-size: 12px; color: #888; margin-bottom: 10px; }
+.console input {
+  width: 100%;
+  background: #0a0a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 10px;
+  color: #e0e0e0;
+  font-family: inherit;
+  font-size: 14px;
+}
+.console input:focus { outline: none; border-color: #555; }
+.console-output {
+  margin-top: 10px;
+  min-height: 80px;
+  background: #0a0a1a;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 12px;
+  color: #aaa;
+  white-space: pre-wrap;
+}
+
+/* === 底部日誌 === */
+.logs {
+  margin-top: 15px;
+  background: #111130;
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 15px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+.log-entry {
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 4px;
+}
+.log-time { color: #444; margin-right: 8px; }
+
+/* === 響應式 === */
+@media (max-width: 800px) {
+  .panels { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- 狀態列 -->
+<div class="status-bar">
+  <div class="stat">
+    <div class="stat-label">生命值 HP</div>
+    <div class="stat-value hp">████████░░ 80%</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">能量 AP</div>
+    <div class="stat-value ap">██████░░░░ 60%</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">狀態</div>
+    <div class="stat-value status">💬 待命中</div>
+  </div>
+</div>
+
+<!-- 三欄面板 -->
+<div class="panels">
+
+  <!-- 技能 -->
+  <div class="panel">
+    <div class="panel-title">⚡ 黑龍技能</div>
+    <div class="skills">
+      <button class="skill-btn" onclick="doSkill('web')"><span class="skill-icon">🌐</span> 網頁搜索</button>
+      <button class="skill-btn" onclick="doSkill('term')"><span class="skill-icon">💻</span> 執行命令</button>
+      <button class="skill-btn" onclick="doSkill('file')"><span class="skill-icon">📁</span> 文件操作</button>
+      <button class="skill-btn" onclick="doSkill('code')"><span class="skill-icon">🤖</span> 寫代碼</button>
+      <button class="skill-btn" onclick="doSkill('browser')"><span class="skill-icon">🌍</span> 瀏覽器</button>
+      <button class="skill-btn" onclick="doSkill('delegate')"><span class="skill-icon">👥</span> 委派任務</button>
+    </div>
+  </div>
+
+  <!-- 世界地圖 -->
+  <div class="panel">
+    <div class="panel-title">🗺️ 三龍地圖</div>
+    <div class="world-map">
+      <div class="node">
+        <div class="node-dot online"></div>
+        <span>🐉 黑龍 <small>(本地)</small></span>
+        <small style="margin-left:auto;color:#4f4">在線</small>
+      </div>
+      <div class="node">
+        <div class="node-dot sleep"></div>
+        <span>🐲 青龍 <small>(本地)</small></span>
+        <small style="margin-left:auto;color:#ff4">休眠</small>
+      </div>
+      <div class="node">
+        <div class="node-dot offline"></div>
+        <span>🐡 金龍 <small>(VPS)</small></span>
+        <small style="margin-left:auto;color:#f44">斷線</small>
+      </div>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:#555;">
+      協調鏈路: 黑→青 ❌ 青→金 ❌ 金→黑 ❌
+    </div>
+  </div>
+
+  <!-- 任務 -->
+  <div class="panel">
+    <div class="panel-title">🎯 任務列表</div>
+    <div class="missions">
+      <div class="mission">📌 協調鏈路修復 (P0)</div>
+      <div class="mission">📌 凡龍母體 v2.5 更新 (P1)</div>
+      <div class="mission mission-done">✅ 遊戲介面製作</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 控制台 -->
+<div class="console">
+  <div class="console-title">💬 輸入指令 / 問題</div>
+  <input type="text" id="cmdInput" placeholder="例如：帮我搜索 AI Agent 的最新消息" onkeydown="if(event.key==='Enter')sendCmd()">
+  <div class="console-output" id="output">🐉 等待指令...</div>
+</div>
+
+<!-- 日誌 -->
+<div class="logs">
+  <div class="panel-title">📜 活動日誌</div>
+  <div id="logArea">
+    <div class="log-entry"><span class="log-time">08:21</span>系統啟動</div>
+  </div>
+</div>
+
+<script>
+// 技能按鈕
+function doSkill(skill) {
+  const names = {
+    web: '🌐 網頁搜索',
+    term: '💻 執行命令',
+    file: '📁 文件操作',
+    code: '🤖 寫代碼',
+    browser: '🌍 瀏覽器控制',
+    delegate: '👥 委派子任務'
+  };
+  showOutput('使用了技能：' + names[skill]);
+  addLog('使用技能: ' + names[skill]);
+}
+
+// 送出指令
+function sendCmd() {
+  const input = document.getElementById('cmdInput');
+  const cmd = input.value.trim();
+  if (!cmd) return;
+  
+  showOutput('🐉 收到指令：' + cmd + '\n\n⏳ 處理中...');
+  addLog('→ ' + cmd);
+  input.value = '';
+  
+  // 示範回應（這裡，未來可串 API）
+  setTimeout(() => {
+    showOutput('🐉 已收到：「' + cmd + '」\n\n我需要一點時間思考...\n\n[示範] 未來這裡會顯示黑龍的實際回應');
+  }, 800);
+}
+
+// 顯示輸出
+function showOutput(text) {
+  document.getElementById('output').textContent = text;
+}
+
+// 加日誌
+function addLog(text) {
+  const now = new Date();
+  const time = now.toTimeString().slice(0,5);
+  const div = document.createElement('div');
+  div.className = 'log-entry';
+  div.innerHTML = '<span class="log-time">' + time + '</span>' + text;
+  document.getElementById('logArea').prepend(div);
+}
+
+// 初始日誌
+addLog('遊戲介面已載入');
+</script>
+
+</body>
+</html>
