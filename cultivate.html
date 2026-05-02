@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>凡龍 · 修仙</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #0a0a12;
+  color: #e8d5b0;
+  font-family: 'Courier New', monospace;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+#bg {
+  position: fixed; inset: 0; z-index: 0;
+  background: radial-gradient(ellipse at 50% 0%, #1a0a2e 0%, #0a0a12 70%);
+}
+#particles {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+}
+#core {
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column; align-items: center; gap: 20px;
+}
+#orb {
+  width: 180px; height: 180px; cursor: pointer;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #7c3aed, #4c1d95, #1e0033);
+  box-shadow: 0 0 60px #7c3aed88, 0 0 120px #7c3aed44, inset 0 0 40px #ffffff22;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.1s, box-shadow 0.1s;
+  user-select: none;
+}
+#orb:active { transform: scale(0.95); }
+#orb.pulse { animation: pulse 0.3s ease-out; }
+@keyframes pulse {
+  0% { box-shadow: 0 0 60px #7c3aed88, 0 0 120px #7c3aed44; }
+  50% { box-shadow: 0 0 100px #a78bfa, 0 0 200px #7c3aed88; }
+  100% { box-shadow: 0 0 60px #7c3aed88, 0 0 120px #7c3aed44; }
+}
+#orb-text { font-size: 14px; color: #c4b5fd; text-align: center; line-height: 1.6; }
+#realm {
+  font-size: 22px; color: #fbbf24; letter-spacing: 4px;
+  text-shadow: 0 0 20px #fbbf2488;
+}
+#level { font-size: 13px; color: #a78bfa; letter-spacing: 2px; }
+#xp-bar-wrap {
+  width: 220px; height: 8px;
+  background: #1e0033; border-radius: 4px; overflow: hidden;
+}
+#xp-bar {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, #7c3aed, #a78bfa);
+  border-radius: 4px; transition: width 0.3s ease;
+}
+#xp-text { font-size: 11px; color: #6b7280; }
+#stats {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px;
+  font-size: 12px; color: #9ca3af;
+  border: 1px solid #2d1f4e; border-radius: 8px; padding: 12px 20px;
+  background: #0f0a1a88;
+}
+#stats .label { color: #6b7280; }
+#stats .val { color: #e8d5b0; text-align: right; }
+#msg {
+  font-size: 12px; color: #a78bfa; min-height: 20px;
+  text-align: center; transition: opacity 0.5s;
+}
+#save-indicator {
+  position: fixed; top: 16px; right: 20px;
+  font-size: 11px; color: #22c55e; opacity: 0;
+  transition: opacity 0.5s; z-index: 10;
+}
+#save-indicator.show { opacity: 1; }
+#reset-btn {
+  position: fixed; bottom: 16px; right: 20px;
+  font-size: 10px; color: #4b5563; cursor: pointer;
+  background: none; border: none;
+  font-family: inherit;
+}
+#reset-btn:hover { color: #ef4444; }
+</style>
+</head>
+<body>
+<div id="bg"></div>
+<canvas id="particles"></canvas>
+<div id="core">
+  <div id="realm">練氣期</div>
+  <div id="orb" onclick="cultivate()">
+    <div id="orb-text">點擊<br>修煉</div>
+  </div>
+  <div id="level">第 1 層</div>
+  <div id="xp-bar-wrap"><div id="xp-bar"></div></div>
+  <div id="xp-text">0 / 10 靈力</div>
+  <div id="stats">
+    <span class="label">累計修煉</span><span class="val" id="total-clicks">0</span>
+    <span class="label">總靈力</span><span class="val" id="total-xp">0</span>
+  </div>
+  <div id="msg"></div>
+</div>
+<div id="save-indicator">已存檔 ✓</div>
+<button id="reset-btn" onclick="resetGame()">重置進度</button>
+<script>
+// ── 境界定義 ──────────────────────────────────────
+const REALMS = [
+  { name: '練氣期', icon: '🌱', xpNeed: 10,  bonus: 1 },
+  { name: '築基期', icon: '🪨', xpNeed: 50,  bonus: 2 },
+  { name: '金丹期', icon: '☀️', xpNeed: 200, bonus: 4 },
+  { name: '元嬰期', icon: '🌙', xpNeed: 800, bonus: 8 },
+  { name: '化神期', icon: '⭐', xpNeed: 3000,bonus: 16 },
+  { name: '大乘期', icon: '🔮', xpNeed: 10000,bonus: 32 },
+  { name: '渡劫期', icon: '⚡', xpNeed: 50000,bonus: 64 },
+  { name: '飛昇期', icon: '🐉', xpNeed: Infinity,bonus: 128 },
+];
+const STORAGE_KEY = 'fanlong_cultivate_v1';
+
+// ── 狀態 ──────────────────────────────────────────
+let state = loadOrInit();
+
+function loadOrInit() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return { totalClicks: 0, totalXP: 0, realm: 0, layer: 1, xp: 0 };
+}
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  const el = document.getElementById('save-indicator');
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 1500);
+}
+
+function resetGame() {
+  if (!confirm('確定重置？所有修煉進度將消失。')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  state = { totalClicks: 0, totalXP: 0, realm: 0, layer: 1, xp: 0 };
+  render();
+}
+
+// ── 修煉核心 ──────────────────────────────────────
+function cultivate() {
+  const bonus = REALMS[state.realm].bonus;
+  const gain = 1 * bonus;
+  state.totalClicks++;
+  state.xp += gain;
+  state.totalXP += gain;
+
+  const orb = document.getElementById('orb');
+  orb.classList.remove('pulse');
+  void orb.offsetWidth;
+  orb.classList.add('pulse');
+
+  // 升層
+  if (state.xp >= REALMS[state.realm].xpNeed) {
+    state.xp -= REALMS[state.realm].xpNeed;
+    state.layer++;
+    if (state.layer > 9) {
+      state.layer = 1;
+      state.realm++;
+      if (state.realm >= REALMS.length) {
+        state.realm = REALMS.length - 1;
+        showMsg('⚠️ 已達飛昇期，繼續積累！');
+      } else {
+        showMsg(REALMS[state.realm].name + ' · 境界突破！');
+      }
+    }
+    save();
+  }
+
+  render();
+}
+
+// ── 顯示 ──────────────────────────────────────────
+function render() {
+  const r = REALMS[state.realm];
+  document.getElementById('realm').textContent = r.name;
+  document.getElementById('level').textContent = '第 ' + state.layer + ' 層';
+  const xpRatio = r.xpNeed === Infinity ? 1 : Math.min(state.xp / r.xpNeed, 1);
+  document.getElementById('xp-bar').style.width = (xpRatio * 100) + '%';
+  document.getElementById('xp-text').textContent =
+    r.xpNeed === Infinity ? state.totalXP + ' 靈力' : state.xp + ' / ' + r.xpNeed + ' 靈力';
+  document.getElementById('total-clicks').textContent = state.totalClicks.toLocaleString();
+  document.getElementById('total-xp').textContent = state.totalXP.toLocaleString();
+}
+
+let msgTimer;
+function showMsg(text) {
+  const el = document.getElementById('msg');
+  el.textContent = text;
+  clearTimeout(msgTimer);
+  msgTimer = setTimeout(() => el.textContent = '', 3000);
+}
+
+render();
+
+// ── 粒子背景 ─────────────────────────────────────
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let W, H, ps = [];
+function resize() { W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
+resize();
+window.addEventListener('resize', resize);
+for (let i = 0; i < 60; i++) {
+  ps.push({ x: Math.random()*innerWidth, y: Math.random()*innerHeight,
+    r: Math.random()*2+0.5, vx:(Math.random()-0.5)*0.3, vy:-Math.random()*0.5-0.1,
+    a: Math.random()*0.5+0.1 });
+}
+function drawParticles() {
+  ctx.clearRect(0,0,W,H);
+  ps.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    if (p.y < -10) { p.y = H+10; p.x = Math.random()*W; }
+    if (p.x < -10) p.x = W+10;
+    if (p.x > W+10) p.x = -10;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(139,92,246,${p.a})`;
+    ctx.fill();
+  });
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+</script>
+</body>
+</html>
