@@ -3,831 +3,988 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🐉 黑龍修仙</title>
+<title>🐉 黒龍修仙</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --gold: #c9a84c;
+  --gold-dark: #8a6a1a;
+  --gold-light: #f0d080;
+  --red: #c0392b;
+  --blue: #2980b9;
+  --green: #27ae60;
+  --purple: #8e44ad;
+  --dark-bg: #0d0b0f;
+  --panel-bg: rgba(18, 14, 22, 0.95);
+  --border: #2a2035;
+  --border-gold: #3a3020;
+  --text: #d4c4a8;
+  --text-dim: #7a6a50;
+}
 
 body {
   font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
-  background: #0a0a12;
-  color: #c8b896;
+  background: var(--dark-bg);
+  color: var(--text);
   min-height: 100vh;
   overflow-x: hidden;
   user-select: none;
 }
 
-/* ═══ 登入畫面 ═══ */
-#login-screen {
-  position: fixed; inset: 0;
-  background: radial-gradient(ellipse at 50% 80%, #1a1428 0%, #0a0a12 70%);
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  z-index: 100;
-}
-#login-screen::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  pointer-events: none;
-}
-
-.login-orb {
-  font-size: 72px;
-  filter: drop-shadow(0 0 30px rgba(80, 255, 136, 0.4));
-  animation: breathe 4s ease-in-out infinite;
-  margin-bottom: 24px;
-}
-@keyframes breathe {
-  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(80,255,136,0.3)); }
-  50% { transform: scale(1.05); filter: drop-shadow(0 0 40px rgba(80,255,136,0.6)); }
-}
-
-.login-title {
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: 6px;
-  color: #4f4;
-  text-shadow: 0 0 20px rgba(80,255,80,0.5);
-  margin-bottom: 8px;
-}
-.login-sub { font-size: 12px; color: #555; letter-spacing: 3px; margin-bottom: 32px; }
-
-.login-input-wrap {
-  position: relative;
-  margin-bottom: 12px;
-}
-.login-input-wrap::before,
-.login-input-wrap::after {
-  content: '◈';
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #3a3a20;
-  font-size: 14px;
-  pointer-events: none;
-}
-.login-input-wrap::before { left: 14px; }
-.login-input-wrap::after { right: 14px; }
-
-#pwd-input {
-  background: #0d0d18;
-  border: 1px solid #2a2a1a;
-  border-radius: 4px;
-  padding: 14px 40px;
-  color: #c8b896;
-  font-size: 16px;
-  width: 260px;
-  text-align: center;
-  letter-spacing: 4px;
-  transition: border-color 0.3s, box-shadow 0.3s;
-}
-#pwd-input:focus {
-  outline: none;
-  border-color: #4f4;
-  box-shadow: 0 0 16px rgba(80,255,80,0.15);
-}
-
-.login-btn {
-  margin-top: 16px;
-  background: linear-gradient(135deg, #1a2a1a 0%, #0d1a0d 100%);
-  border: 1px solid #2a4;
-  border-radius: 4px;
-  padding: 12px 48px;
-  color: #4f4;
-  font-size: 14px;
-  letter-spacing: 4px;
-  cursor: pointer;
-  transition: all 0.3s;
-  box-shadow: 0 0 12px rgba(80,255,80,0.1);
-}
-.login-btn:hover {
-  background: linear-gradient(135deg, #223222 0%, #112211 100%);
-  box-shadow: 0 0 24px rgba(80,255,80,0.25);
-  transform: translateY(-1px);
-}
-#login-error { color: #f44; margin-top: 12px; font-size: 12px; min-height: 18px; letter-spacing: 1px; }
-
-/* ═══ 主遊戲 ═══ */
-#game-screen { display: none; width: 100%; min-height: 100vh; }
-
-.game-bg {
+/* ═══════════════════════════════════
+   BACKGROUND
+═══════════════════════════════════ */
+.game-world {
   position: fixed; inset: 0; z-index: -1;
   background:
-    radial-gradient(ellipse at 20% 20%, rgba(30,20,50,0.8) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 80%, rgba(10,30,40,0.6) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 100%, rgba(20,40,20,0.4) 0%, transparent 40%),
-    #0a0a12;
+    radial-gradient(ellipse at 15% 85%, rgba(60,20,80,0.4) 0%, transparent 45%),
+    radial-gradient(ellipse at 85% 15%, rgba(20,40,80,0.3) 0%, transparent 45%),
+    radial-gradient(ellipse at 50% 50%, rgba(30,20,50,0.2) 0%, transparent 60%),
+    #0d0b0f;
 }
-.game-bg::after {
-  content: '';
-  position: absolute; inset: 0;
-  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-  pointer-events: none;
+/* 煙霧粒子 */
+.particles {
+  position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
 }
-
-/* ── 頂部狀態列 ── */
-.top-bar {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 12px 20px;
-  background: linear-gradient(180deg, rgba(20,16,32,0.95) 0%, rgba(20,16,32,0.7) 100%);
-  border-bottom: 1px solid #2a2240;
-  backdrop-filter: blur(8px);
-  position: sticky; top: 0; z-index: 50;
-}
-
-.dragon-avatar {
-  width: 48px; height: 48px;
+.particle {
+  position: absolute; width: 2px; height: 2px;
+  background: rgba(201,168,76,0.3);
   border-radius: 50%;
-  background: radial-gradient(circle at 40% 40%, #2a4, #0a2a0a);
-  border: 2px solid #3a3;
-  box-shadow: 0 0 16px rgba(68,255,68,0.3);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 24px;
-  flex-shrink: 0;
-  animation: avatarPulse 3s ease-in-out infinite;
+  animation: floatUp linear infinite;
 }
-@keyframes avatarPulse {
-  0%, 100% { box-shadow: 0 0 16px rgba(68,255,68,0.3); }
-  50% { box-shadow: 0 0 28px rgba(68,255,68,0.5); }
+@keyframes floatUp {
+  0% { transform: translateY(100vh) scale(1); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-10vh) scale(0.5); opacity: 0; }
 }
 
-.dragon-meta { flex: 1; }
-.dragon-title {
-  font-size: 16px; font-weight: 700;
-  color: #4f4;
-  text-shadow: 0 0 8px rgba(80,255,80,0.4);
+/* ═══════════════════════════════════
+   SCREEN LAYOUT
+═══════════════════════════════════ */
+#login-screen, #game-screen { width: 100%; min-height: 100vh; }
+#game-screen { display: none; }
+
+/* 頂部 HUD */
+.top-hud {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 60px;
+  background: linear-gradient(180deg, rgba(13,11,15,0.98) 0%, rgba(13,11,15,0.8) 80%, transparent 100%);
+  display: flex; align-items: center; gap: 16px;
+  padding: 0 16px;
+  z-index: 100;
+  border-bottom: 1px solid var(--border);
+}
+
+/* 左上：角色頭像 */
+.char-portrait {
+  width: 44px; height: 44px;
+  border-radius: 4px;
+  border: 2px solid var(--gold-dark);
+  background: radial-gradient(circle at 40% 35%, #2a4a2a, #0a1a0a);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+  box-shadow: 0 0 12px rgba(201,168,76,0.2), inset 0 0 8px rgba(0,0,0,0.5);
+  position: relative;
+  flex-shrink: 0;
+}
+.char-portrait::after {
+  content: '';
+  position: absolute; bottom: -2px; left: 50%;
+  transform: translateX(-50%);
+  width: 20px; height: 3px;
+  background: var(--gold);
+  border-radius: 2px 2px 0 0;
+}
+
+.char-info { display: flex; flex-direction: column; gap: 2px; }
+.char-name {
+  font-size: 14px; font-weight: 700;
+  color: var(--gold-light);
+  text-shadow: 0 0 8px rgba(201,168,76,0.4);
   letter-spacing: 2px;
 }
-.dragon-state { font-size: 11px; color: #666; margin-top: 2px; letter-spacing: 1px; }
+.char-realm {
+  font-size: 10px; color: var(--text-dim);
+  letter-spacing: 1px;
+}
 
-.stat-pair { display: flex; gap: 16px; }
-.stat-item { display: flex; flex-direction: column; gap: 3px; min-width: 80px; }
-.stat-label { font-size: 9px; color: #555; letter-spacing: 2px; text-transform: uppercase; }
-.stat-bar-wrap { height: 6px; background: #1a1a28; border-radius: 3px; overflow: hidden; position: relative; }
-.stat-bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; position: relative; }
-.stat-bar-fill::after {
+/* 頂部中央：HP / MP / EXP 條 */
+.hud-bars { flex: 1; display: flex; flex-direction: column; gap: 5px; max-width: 320px; }
+.hud-bar-row { display: flex; align-items: center; gap: 6px; }
+.bar-label {
+  font-size: 9px; color: var(--text-dim);
+  width: 20px; letter-spacing: 1px; text-align: right;
+}
+.bar-track {
+  flex: 1; height: 8px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 4px; overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.bar-fill {
+  height: 100%; border-radius: 4px;
+  transition: width 0.5s ease;
+  position: relative;
+}
+.bar-fill::after {
   content: '';
   position: absolute; right: 0; top: 0; bottom: 0;
-  width: 4px;
-  background: rgba(255,255,255,0.4);
-  border-radius: 2px;
+  width: 3px;
+  background: rgba(255,255,255,0.5);
+  border-radius: 0 4px 4px 0;
 }
-.hp-fill { background: linear-gradient(90deg, #1a4, #3f6); }
-.hp-fill::after { background: rgba(180,255,180,0.5); }
-.ap-fill { background: linear-gradient(90deg, #148, #4af); }
-.ap-fill::after { background: rgba(180,220,255,0.5); }
-.stat-num { font-size: 11px; color: #888; margin-top: 1px; }
+.hp-fill-bar { background: linear-gradient(90deg, #7a1010, #c0392b, #e74c3c); }
+.mp-fill-bar { background: linear-gradient(90deg, #0a3060, #2980b9, #5dade2); }
+.xp-fill-bar { background: linear-gradient(90deg, #5a4a10, #c9a84c, #f0d080); }
+.bar-num { font-size: 9px; color: var(--text-dim); width: 30px; }
 
-/* ── 主內容 ── */
-.main-content {
+/* 右上：金幣 / 境界 */
+.hud-right { display: flex; flex-direction: column; gap: 3px; align-items: flex-end; margin-left: auto; }
+.hud-stat { font-size: 10px; color: var(--text-dim); display: flex; align-items: center; gap: 4px; }
+.hud-stat span { color: var(--gold); }
+
+/* ═══════════════════════════════════
+   MAIN CONTENT AREA
+═══════════════════════════════════ */
+.game-content {
+  padding: 72px 12px 90px;
   max-width: 900px;
   margin: 0 auto;
-  padding: 20px 16px 100px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
-/* ── 通用面板 ── */
-.panel {
-  background: linear-gradient(160deg, rgba(22,18,34,0.9) 0%, rgba(16,14,24,0.95) 100%);
-  border: 1px solid #2a2440;
-  border-radius: 8px;
+/* ═══════════════════════════════════
+   PANEL FRAME
+═══════════════════════════════════ */
+.game-panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
   position: relative;
   overflow: hidden;
 }
-/* 頂部金屬條裝飾 */
-.panel::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #4a4a30, #8a8a50, #4a4a30, transparent);
-  opacity: 0.6;
+/* 四角金屬裝飾 */
+.game-panel::before {
+  content: '┌';
+  position: absolute; top: 4px; left: 6px;
+  color: var(--gold-dark); font-size: 10px; opacity: 0.4;
+  font-family: monospace;
 }
-/* 四角裝飾 */
-.panel::after {
-  content: '❧';
-  position: absolute;
-  top: 6px; right: 10px;
-  color: #3a3020;
-  font-size: 10px;
-  pointer-events: none;
+.game-panel::after {
+  content: '┐';
+  position: absolute; top: 4px; right: 6px;
+  color: var(--gold-dark); font-size: 10px; opacity: 0.4;
+  font-family: monospace;
 }
 
 .panel-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 16px 0;
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px 0;
 }
 .panel-title {
-  font-size: 11px;
-  color: #8a8a6a;
-  letter-spacing: 3px;
+  font-size: 10px; color: var(--gold); letter-spacing: 3px;
   text-transform: uppercase;
 }
-.panel-body { padding: 12px 16px 16px; }
+.panel-body { padding: 10px 14px 14px; }
 
-/* ── 龍的洞穴 ── */
-.cave-panel {
-  background: linear-gradient(160deg, rgba(14,22,18,0.95) 0%, rgba(10,16,12,0.98) 100%);
-  border-color: #1a3020;
-  min-height: 200px;
-}
-.cave-panel::before {
-  background: linear-gradient(90deg, transparent, #2a4a2a, #4a6a4a, #2a4a2a, transparent);
-  opacity: 0.5;
-}
+/* ═══════════════════════════════════
+   CHARACTER PANEL
+═══════════════════════════════════ */
+.char-panel { background: linear-gradient(160deg, rgba(20,16,28,0.98) 0%, rgba(14,10,18,0.98) 100%); }
 
-.cave-layout { display: flex; gap: 20px; align-items: flex-start; }
+.char-panel-layout { display: flex; gap: 14px; }
 
-.dragon-sprite-area {
-  flex-shrink: 0;
-  width: 140px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
+/* 角色大頭像 */
+.avatar-section { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.big-avatar {
+  width: 80px; height: 80px;
+  border-radius: 6px;
+  border: 2px solid var(--gold-dark);
+  background: radial-gradient(circle at 40% 35%, #2a4a2a, #0a1a0a);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 48px;
+  box-shadow: 0 0 20px rgba(201,168,76,0.15), inset 0 0 15px rgba(0,0,0,0.6);
+  animation: avatarGlow 4s ease-in-out infinite;
 }
-.dragon-sprite {
-  font-size: 72px;
-  line-height: 1;
-  filter: drop-shadow(0 0 20px rgba(68,255,68,0.4));
-  animation: dragonFloat 4s ease-in-out infinite;
-  position: relative;
-}
-@keyframes dragonFloat {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  25% { transform: translateY(-6px) rotate(1deg); }
-  75% { transform: translateY(-3px) rotate(-1deg); }
-}
-.dragon-sprite::before {
-  content: '';
-  position: absolute;
-  bottom: -8px; left: 50%;
-  transform: translateX(-50%);
-  width: 60px; height: 8px;
-  background: radial-gradient(ellipse, rgba(68,255,68,0.2) 0%, transparent 70%);
-  border-radius: 50%;
-  animation: shadowPulse 4s ease-in-out infinite;
-}
-@keyframes shadowPulse {
-  0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.6; }
-  50% { transform: translateX(-50%) scale(0.85); opacity: 0.3; }
+@keyframes avatarGlow {
+  0%, 100% { box-shadow: 0 0 15px rgba(80,200,80,0.15), inset 0 0 15px rgba(0,0,0,0.6); }
+  50% { box-shadow: 0 0 30px rgba(80,200,80,0.3), inset 0 0 15px rgba(0,0,0,0.6); }
 }
 
-.dragon-cultivation {
-  font-size: 10px;
-  color: #6a8;
-  letter-spacing: 2px;
-  text-align: center;
-  padding: 4px 12px;
-  background: rgba(40,80,50,0.3);
-  border: 1px solid #2a4a2a;
-  border-radius: 20px;
-}
-.dragon-mood-badge {
-  font-size: 12px;
-  text-align: center;
-}
-
-.cave-info { flex: 1; display: flex; flex-direction: column; gap: 10px; }
-
-.dragon-name-row { display: flex; align-items: center; gap: 10px; }
-.dragon-name-text {
-  font-size: 20px;
-  font-weight: 700;
-  color: #4f4;
-  text-shadow: 0 0 12px rgba(80,255,80,0.4);
-  letter-spacing: 3px;
-}
-.dragon-level {
-  font-size: 10px;
-  color: #fff;
-  background: linear-gradient(135deg, #2a4, #148);
-  padding: 2px 8px;
-  border-radius: 10px;
+.avatar-level {
+  font-size: 10px; color: var(--gold);
+  background: rgba(201,168,76,0.1);
+  border: 1px solid var(--gold-dark);
+  padding: 2px 10px; border-radius: 10px;
   letter-spacing: 1px;
 }
 
-.dragon-speech-box {
-  background: rgba(10,20,10,0.6);
-  border-left: 2px solid #3a5;
-  padding: 10px 14px;
-  border-radius: 0 6px 6px 0;
-  font-size: 13px;
-  color: #9a9;
-  min-height: 52px;
-  line-height: 1.6;
-  position: relative;
-}
-.dragon-speech-box::before {
-  content: '❝';
-  position: absolute;
-  top: 6px; left: 6px;
-  color: #2a4;
-  font-size: 10px;
-}
-
-.dragon-stats-mini {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.dragon-stat-mini {
-  display: flex;
-  align-items: center;
-  gap: 5px;
+/* 屬性 */
+.attr-section { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.attr-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.attr-item {
+  display: flex; align-items: center; gap: 4px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 4px;
+  padding: 4px 8px;
   font-size: 11px;
-  color: #666;
+  min-width: 70px;
 }
-.dragon-stat-mini span { color: #8a8; }
+.attr-icon { font-size: 12px; }
+.attr-name { color: var(--text-dim); font-size: 9px; }
+.attr-val { color: var(--text); font-weight: 700; margin-left: auto; }
 
-/* ── 技能格 ── */
-.skills-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+/* 境界進度 */
+.realm-section { display: flex; flex-direction: column; gap: 4px; }
+.realm-label { font-size: 10px; color: var(--text-dim); display: flex; justify-content: space-between; }
+.realm-bar-track {
+  height: 6px; background: rgba(255,255,255,0.05);
+  border-radius: 3px; overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.06);
 }
-.skill-btn {
-  background: linear-gradient(135deg, #12141e 0%, #0e1018 100%);
-  border: 1px solid #2a2840;
+.realm-bar-fill {
+  height: 100%; border-radius: 3px;
+  background: linear-gradient(90deg, #5a3080, #8e44ad, #a569bd);
+  transition: width 0.8s ease;
+}
+.realm-next { font-size: 9px; color: var(--purple); opacity: 0.7; }
+
+/* ═══════════════════════════════════
+   SKILL BAR (底部固定)
+═══════════════════════════════════ */
+.skill-bar {
+  position: fixed; bottom: 12px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; gap: 6px;
+  background: rgba(13,11,15,0.95);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px;
+  z-index: 100;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.6);
+}
+.skill-slot {
+  width: 52px; height: 52px;
   border-radius: 6px;
-  padding: 10px 8px;
-  color: #8a8a9a;
-  font-size: 11px;
+  border: 1px solid var(--border);
+  background: rgba(20,16,28,0.9);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
   cursor: pointer;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  transition: all 0.25s;
   position: relative;
-  overflow: hidden;
+  transition: all 0.2s;
+  gap: 2px;
 }
-.skill-btn::before {
-  content: '';
+.skill-slot:hover {
+  border-color: var(--gold-dark);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(201,168,76,0.15);
+}
+.skill-slot.active {
+  border-color: var(--gold);
+  box-shadow: 0 0 12px rgba(201,168,76,0.25);
+}
+.skill-slot .skill-emoji { font-size: 22px; }
+.skill-slot .skill-key {
+  position: absolute; top: 2px; right: 3px;
+  font-size: 8px; color: var(--text-dim);
+  background: rgba(0,0,0,0.5);
+  padding: 1px 3px; border-radius: 2px;
+}
+.skill-slot .skill-cd {
   position: absolute; inset: 0;
-  background: linear-gradient(135deg, transparent 40%, rgba(80,255,80,0.03) 100%);
-  opacity: 0;
-  transition: opacity 0.25s;
-}
-.skill-btn:hover {
-  border-color: #3a4;
-  color: #c8c;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(80,255,80,0.12), inset 0 0 20px rgba(80,255,80,0.03);
-}
-.skill-btn:hover::before { opacity: 1; }
-.skill-btn:active { transform: translateY(0); }
-.skill-icon { font-size: 20px; }
-
-/* ── 三龍地圖 ── */
-.dragon-list { display: flex; flex-direction: column; gap: 7px; }
-.dragon-node {
-  display: flex; align-items: center; gap: 10px;
-  padding: 9px 12px;
-  background: rgba(10,10,20,0.5);
-  border: 1px solid #1e1e30;
+  background: rgba(0,0,0,0.6);
   border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: #fff;
+  display: none;
+}
+.skill-slot.on-cooldown .skill-cd { display: flex; }
+
+/* ═══════════════════════════════════
+   INVENTORY GRID
+═══════════════════════════════════ */
+.inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 5px;
+}
+.inv-slot {
+  aspect-ratio: 1;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+}
+.inv-slot:hover { border-color: var(--gold-dark); background: rgba(201,168,76,0.05); }
+.inv-slot.filled { background: rgba(201,168,76,0.05); border-color: rgba(201,168,76,0.2); }
+.inv-slot .item-count {
+  position: absolute; bottom: 1px; right: 3px;
+  font-size: 8px; color: var(--text-dim);
+}
+.inv-slot .item-grade {
+  position: absolute; top: 1px; left: 2px;
+  font-size: 7px;
+}
+
+/* 裝備槽 */
+.equip-grid {
+  display: grid;
+  grid-template-columns: 60px 60px 60px;
+  grid-template-rows: 60px 60px 60px;
+  gap: 4px;
+  justify-content: center;
+}
+.equip-slot {
+  width: 60px; height: 60px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  font-size: 22px;
+  gap: 2px;
+  position: relative;
+}
+.equip-slot .equip-type { font-size: 8px; color: var(--text-dim); }
+.equip-slot.armed { border-color: var(--gold-dark); background: rgba(201,168,76,0.05); }
+
+/* ═══════════════════════════════════
+   QUEST LIST
+═══════════════════════════════════ */
+.quest-list { display: flex; flex-direction: column; gap: 6px; }
+.quest-item {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 8px 10px;
+  background: rgba(0,0,0,0.2);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 4px;
+  border-left: 3px solid;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.quest-item:hover { background: rgba(255,255,255,0.03); }
+.quest-item.p0 { border-left-color: var(--red); }
+.quest-item.p1 { border-left-color: var(--gold); }
+.quest-item.p2 { border-left-color: var(--blue); }
+.quest-item.done { border-left-color: #333; opacity: 0.5; }
+.quest-item.done .quest-name { text-decoration: line-through; }
+.quest-pri { font-size: 9px; padding: 1px 4px; border-radius: 2px; flex-shrink: 0; margin-top: 1px; }
+.p0-bg { background: rgba(192,57,43,0.2); color: #e74c3c; }
+.p1-bg { background: rgba(201,168,76,0.2); color: var(--gold); }
+.p2-bg { background: rgba(41,128,185,0.2); color: #5dade2; }
+.quest-name { flex: 1; }
+.quest-reward { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
+
+/* ═══════════════════════════════════
+   CHAT / CONSOLE
+═══════════════════════════════════ */
+.chat-output {
+  background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 4px;
+  padding: 10px;
+  min-height: 100px;
+  max-height: 160px;
+  overflow-y: auto;
+  font-size: 12px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  color: #8a9a7a;
+}
+.chat-output::-webkit-scrollbar { width: 3px; }
+.chat-output::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 2px; }
+
+.chat-row { display: flex; gap: 8px; align-items: center; }
+.chat-input {
+  flex: 1;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 10px 12px;
+  color: var(--text);
+  font-family: inherit;
   font-size: 13px;
   transition: border-color 0.2s;
 }
-.dragon-node:hover { border-color: #2a2a44; }
-.dragon-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  position: relative;
-}
-.dot-online {
-  background: #4f4;
-  box-shadow: 0 0 8px #4f4;
-  animation: dotPulse 2s ease-in-out infinite;
-}
-.dot-sleep {
-  background: #ff4;
-  box-shadow: 0 0 8px #ff4;
-  animation: dotPulse 2s ease-in-out infinite 0.5s;
-}
-.dot-offline {
-  background: #f44;
-  box-shadow: 0 0 6px #f44;
-}
-@keyframes dotPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-.dragon-host { margin-left: auto; font-size: 10px; color: #444; }
-.dragon-status-text { margin-left: auto; font-size: 10px; }
-.online-t { color: #4f4; }
-.sleep-t { color: #ff4; }
-.offline-t { color: #f44; }
-
-/* ── 任務 ── */
-.missions-list { display: flex; flex-direction: column; gap: 6px; }
-.mission-item {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 10px;
-  background: rgba(10,10,20,0.4);
-  border-radius: 5px;
-  font-size: 12px;
-  border-left: 2px solid;
-  transition: background 0.2s;
-}
-.mission-item:hover { background: rgba(20,20,40,0.4); }
-.mission-item.p0 { border-left-color: #f44; }
-.mission-item.p1 { border-left-color: #fa4; }
-.mission-item.p2 { border-left-color: #4af; }
-.mission-item.done { border-left-color: #333; opacity: 0.5; }
-.priority {
-  font-size: 9px; padding: 1px 5px;
-  border-radius: 3px; letter-spacing: 1px;
-  flex-shrink: 0;
-}
-.p0 { background: rgba(100,20,20,0.4); color: #f66; }
-.p1 { background: rgba(80,50,20,0.4); color: #fa4; }
-.p2 { background: rgba(20,50,80,0.4); color: #4af; }
-
-/* ── 控制台 ── */
-.console-panel {}
-.console-output {
-  background: rgba(4,4,10,0.8);
-  border: 1px solid #1a1a2a;
-  border-radius: 6px;
-  padding: 12px;
-  min-height: 80px;
-  font-size: 13px;
-  color: #7a8;
-  line-height: 1.7;
-  max-height: 160px;
-  overflow-y: auto;
-  white-space: pre-wrap;
-  margin-bottom: 10px;
-}
-.console-output::-webkit-scrollbar { width: 3px; }
-.console-output::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 2px; }
-
-.cmd-row { display: flex; gap: 8px; }
-#cmd-input {
-  flex: 1;
-  background: rgba(8,8,16,0.9);
-  border: 1px solid #2a2a3a;
-  border-radius: 6px;
-  padding: 10px 14px;
-  color: #c8b896;
-  font-family: inherit;
-  font-size: 13px;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-#cmd-input:focus {
-  outline: none;
-  border-color: #4a4a2a;
-  box-shadow: 0 0 12px rgba(80,255,80,0.08);
-}
-#cmd-input::placeholder { color: #444; }
-.send-btn {
-  background: linear-gradient(135deg, #1a2a1a 0%, #122012 100%);
+.chat-input:focus { outline: none; border-color: var(--gold-dark); }
+.chat-input::placeholder { color: #444; }
+.chat-send {
+  background: linear-gradient(135deg, #1a2a1a, #0d1a0d);
   border: 1px solid #2a4;
-  border-radius: 6px;
-  padding: 10px 20px;
+  border-radius: 4px;
+  padding: 10px 18px;
   color: #4f4;
-  font-size: 13px;
-  cursor: pointer;
+  font-size: 12px; cursor: pointer;
   transition: all 0.2s;
   letter-spacing: 1px;
 }
-.send-btn:hover {
-  background: linear-gradient(135deg, #223222 0%, #1a2a1a 100%);
-  box-shadow: 0 0 16px rgba(80,255,80,0.2);
-}
-.send-btn:active { transform: scale(0.98); }
+.chat-send:hover { box-shadow: 0 0 12px rgba(68,255,68,0.2); }
 
-/* ── 直播面板 ── */
-.live-panel { display: none; }
-.live-panel.show { display: block; }
-.live-feed {
+/* ═══════════════════════════════════
+   LIVE FEED
+═══════════════════════════════════ */
+.live-feed-wrap {
   position: relative;
-  border-radius: 6px;
+  border-radius: 4px;
   overflow: hidden;
-  border: 1px solid #1a1a30;
-  background: #06060e;
-  min-height: 200px;
+  border: 1px solid var(--border);
+  background: #000;
+  min-height: 180px;
 }
-.live-feed img {
-  width: 100%; display: block;
-  border-radius: 6px;
-}
-.live-offline-overlay {
+.live-feed-wrap img { width: 100%; display: block; }
+.live-offline-msg {
   position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  color: #333; font-size: 14px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  color: #333; font-size: 13px; gap: 8px;
   pointer-events: none;
-  flex-direction: column; gap: 8px;
 }
-.live-offline-overlay span { font-size: 32px; }
-.live-controls {
-  margin-top: 10px;
-  display: flex; gap: 8px; align-items: center;
+.live-offline-msg span { font-size: 32px; }
+.live-red-dot {
+  position: absolute; top: 8px; right: 8px;
+  width: 8px; height: 8px;
+  background: #e74c3c;
+  border-radius: 50%;
+  animation: livePulse 1.5s ease-in-out infinite;
 }
+@keyframes livePulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(231,76,60,0.5); }
+  50% { transform: scale(1.1); box-shadow: 0 0 0 4px rgba(231,76,60,0); }
+}
+.live-controls { margin-top: 8px; display: flex; gap: 6px; align-items: center; }
 .live-url-input {
   flex: 1;
-  background: rgba(8,8,16,0.9);
-  border: 1px solid #2a2a3a;
-  border-radius: 5px;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 7px 10px;
+  color: #555;
+  font-size: 11px; font-family: inherit;
+}
+.live-url-input:focus { outline: none; border-color: var(--border-gold); }
+
+/* ═══════════════════════════════════
+   FLOATING NOTIFICATIONS
+═══════════════════════════════════ */
+#notif-layer {
+  position: fixed; top: 70px; right: 16px;
+  display: flex; flex-direction: column; gap: 6px;
+  z-index: 200; pointer-events: none;
+  max-width: 240px;
+}
+.notif {
+  background: rgba(13,11,15,0.95);
+  border: 1px solid var(--border);
+  border-radius: 4px;
   padding: 8px 12px;
-  color: #666;
   font-size: 11px;
-  font-family: inherit;
+  color: var(--text);
+  animation: notifIn 0.3s ease, notifOut 0.3s ease 2.7s forwards;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
 }
-.live-url-input:focus { outline: none; border-color: #3a3a4a; }
+.notif.success { border-color: #2a4; }
+.notif.warn { border-color: var(--gold-dark); color: var(--gold); }
+.notif.danger { border-color: var(--red); color: #e74c3c; }
+@keyframes notifIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes notifOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
 
-/* ── 底部導航 ── */
+/* ═══════════════════════════════════
+   BOTTOM NAV
+═══════════════════════════════════ */
 .bottom-nav {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  display: flex;
-  justify-content: center;
-  gap: 6px;
-  padding: 10px 16px 16px;
-  background: linear-gradient(0deg, rgba(10,10,18,0.98) 0%, rgba(10,10,18,0.8) 70%, transparent 100%);
-  backdrop-filter: blur(8px);
-  z-index: 50;
-}
-.nav-btn {
-  background: rgba(16,14,24,0.9);
-  border: 1px solid #2a2440;
+  position: fixed; bottom: 72px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; gap: 4px;
+  background: rgba(13,11,15,0.9);
+  border: 1px solid var(--border);
   border-radius: 20px;
-  padding: 8px 16px;
-  color: #666;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-  letter-spacing: 1px;
+  padding: 4px;
+  z-index: 100;
+  backdrop-filter: blur(8px);
 }
-.nav-btn:hover { border-color: #3a3450; color: #9a9; }
-.nav-btn.active {
-  background: rgba(20,30,20,0.9);
-  border-color: #3a4;
-  color: #4f4;
-  box-shadow: 0 0 12px rgba(80,255,80,0.1);
+.nav-tab {
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 11px; color: var(--text-dim);
+  cursor: pointer; transition: all 0.2s;
+  border: 1px solid transparent;
+  letter-spacing: 0.5px;
 }
-.nav-btn.live-nav {
-  color: #f44;
-  border-color: #4a2a2a;
-}
-.nav-btn.live-nav.active {
-  background: rgba(40,16,16,0.9);
-  border-color: #f44;
-  color: #f44;
-  box-shadow: 0 0 12px rgba(255,68,68,0.15);
-  animation: liveBlink 2s ease-in-out infinite;
-}
-@keyframes liveBlink {
-  0%, 100% { box-shadow: 0 0 12px rgba(255,68,68,0.15); }
-  50% { box-shadow: 0 0 20px rgba(255,68,68,0.3); }
+.nav-tab:hover { color: var(--text); }
+.nav-tab.active {
+  background: rgba(201,168,76,0.1);
+  border-color: var(--gold-dark);
+  color: var(--gold);
 }
 
-/* ── 滾動條 ── */
+/* ═══════════════════════════════════
+   PAGE SECTIONS
+═══════════════════════════════════ */
+.page-section { display: none; }
+.page-section.active { display: block; }
+
+/* ═══════════════════════════════════
+   LOGIN SCREEN
+═══════════════════════════════════ */
+#login-screen {
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 100%, rgba(60,20,80,0.6) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 0%, rgba(20,40,80,0.3) 0%, transparent 50%),
+    #0d0b0f;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  z-index: 1000;
+}
+
+.login-title-chinese {
+  font-size: 36px;
+  font-weight: 900;
+  letter-spacing: 12px;
+  color: var(--gold);
+  text-shadow: 0 0 30px rgba(201,168,76,0.5), 0 0 60px rgba(201,168,76,0.2);
+  margin-bottom: 4px;
+  animation: titleGlow 3s ease-in-out infinite;
+}
+@keyframes titleGlow {
+  0%, 100% { text-shadow: 0 0 30px rgba(201,168,76,0.5), 0 0 60px rgba(201,168,76,0.2); }
+  50% { text-shadow: 0 0 40px rgba(201,168,76,0.7), 0 0 80px rgba(201,168,76,0.3); }
+}
+.login-subtitle {
+  font-size: 11px; color: var(--text-dim);
+  letter-spacing: 6px; margin-bottom: 40px;
+}
+
+.login-dragon {
+  font-size: 80px;
+  margin-bottom: 24px;
+  filter: drop-shadow(0 0 30px rgba(80,200,80,0.4));
+  animation: loginFloat 3s ease-in-out infinite;
+}
+@keyframes loginFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-10px) scale(1.03); }
+}
+
+.login-input {
+  background: rgba(0,0,0,0.6);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 14px 40px;
+  color: var(--gold-light);
+  font-size: 18px;
+  width: 240px; text-align: center;
+  letter-spacing: 6px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  margin-bottom: 12px;
+}
+.login-input:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 20px rgba(201,168,76,0.2);
+}
+.login-input::placeholder { color: #444; letter-spacing: 4px; }
+
+.login-enter {
+  background: linear-gradient(135deg, #1a2a1a, #0d1a0d);
+  border: 1px solid #2a4;
+  border-radius: 4px;
+  padding: 12px 48px;
+  color: #4f4; font-size: 14px;
+  cursor: pointer; letter-spacing: 4px;
+  transition: all 0.3s;
+  box-shadow: 0 0 16px rgba(68,255,68,0.1);
+}
+.login-enter:hover {
+  box-shadow: 0 0 28px rgba(68,255,68,0.25);
+  transform: translateY(-1px);
+}
+
+.login-error { color: #e74c3c; font-size: 11px; margin-top: 10px; min-height: 16px; letter-spacing: 1px; }
+
+/* 仙俠裝飾線 */
+.login-divider {
+  width: 200px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dark), transparent);
+  margin: 24px 0;
+}
+
+/* ═══════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════ */
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 2px; }
 
-/* ── 響應式 ── */
+/* ═══════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════ */
 @media (max-width: 600px) {
-  .top-bar { flex-wrap: wrap; gap: 10px; }
-  .stat-pair { gap: 10px; }
-  .stat-item { min-width: 65px; }
-  .cave-layout { flex-direction: column; align-items: center; }
-  .skills-grid { grid-template-columns: repeat(2, 1fr); }
-  .dragon-sprite { font-size: 56px; }
-  .main-content { padding: 12px 10px 100px; }
+  .char-panel-layout { flex-direction: column; }
+  .big-avatar { width: 64px; height: 64px; font-size: 36px; }
+  .hud-bars { max-width: 200px; }
+  .skill-bar { gap: 4px; padding: 6px; }
+  .skill-slot { width: 44px; height: 44px; }
+  .skill-slot .skill-emoji { font-size: 18px; }
+  .inventory-grid { grid-template-columns: repeat(4, 1fr); }
+  .bottom-nav { bottom: 68px; }
 }
 </style>
 </head>
 <body>
 
-<!-- 登入畫面 -->
+<!-- ═══ 登入畫面 ═══ -->
 <div id="login-screen">
-  <div class="login-orb">🐉</div>
-  <div class="login-title">黑 龍 修 仙</div>
-  <div class="login-sub">DRAGON CULTIVATION</div>
-  <div class="login-input-wrap">
-    <input type="password" id="pwd-input" placeholder="████" onkeydown="if(event.key==='Enter')doLogin()">
-  </div>
-  <button class="login-btn" onclick="doLogin()">入 關</button>
-  <div id="login-error"></div>
+  <div class="login-title-chinese">黒 龍 修 仙</div>
+  <div class="login-subtitle">DRAGON CULTIVATION</div>
+  <div class="login-dragon">🐉</div>
+  <input type="password" class="login-input" id="pwd-input" placeholder="密碼" onkeydown="if(event.key==='Enter')doLogin()">
+  <button class="login-enter" onclick="doLogin()">入 關</button>
+  <div class="login-error" id="login-error"></div>
 </div>
 
-<!-- 主遊戲 -->
-<div id="game-screen">
-  <div class="game-bg"></div>
+<!-- ═══ 通知層 ═══ -->
+<div id="notif-layer"></div>
 
-  <!-- 頂部狀態列 -->
-  <div class="top-bar">
-    <div class="dragon-avatar">🐉</div>
-    <div class="dragon-meta">
-      <div class="dragon-title">黑 龍</div>
-      <div class="dragon-state" id="dragon-status-top">◈ 待命中</div>
+<!-- ═══ 遊戲世界 ═══ -->
+<div id="game-screen">
+  <div class="game-world"></div>
+  <div class="particles" id="particles"></div>
+
+  <!-- 頂部 HUD -->
+  <div class="top-hud">
+    <div class="char-portrait">🐉</div>
+    <div class="char-info">
+      <div class="char-name" id="hud-name">黒 龍</div>
+      <div class="char-realm" id="hud-realm">◆ 築基中期</div>
     </div>
-    <div class="stat-pair">
-      <div class="stat-item">
-        <div class="stat-label">生命</div>
-        <div class="stat-bar-wrap">
-          <div class="stat-bar-fill hp-fill" id="hp-bar-top" style="width:80%"></div>
+
+    <div class="hud-bars">
+      <div class="hud-bar-row">
+        <span class="bar-label" style="color:#e74c3c;">HP</span>
+        <div class="bar-track">
+          <div class="bar-fill hp-fill-bar" id="hp-bar" style="width:75%"></div>
         </div>
-        <div class="stat-num" id="hp-num-top">80%</div>
+        <span class="bar-num" id="hp-num">750/1000</span>
       </div>
-      <div class="stat-item">
-        <div class="stat-label">法力</div>
-        <div class="stat-bar-wrap">
-          <div class="stat-bar-fill ap-fill" id="ap-bar-top" style="width:60%"></div>
+      <div class="hud-bar-row">
+        <span class="bar-label" style="color:#5dade2;">MP</span>
+        <div class="bar-track">
+          <div class="bar-fill mp-fill-bar" id="mp-bar" style="width:60%"></div>
         </div>
-        <div class="stat-num" id="ap-num-top">60%</div>
+        <span class="bar-num" id="mp-num">300/500</span>
       </div>
+      <div class="hud-bar-row">
+        <span class="bar-label" style="color:var(--gold);">EXP</span>
+        <div class="bar-track">
+          <div class="bar-fill xp-fill-bar" id="xp-bar" style="width:45%"></div>
+        </div>
+        <span class="bar-num" id="xp-num">450/1000</span>
+      </div>
+    </div>
+
+    <div class="hud-right">
+      <div class="hud-stat">💰 <span id="hud-gold">12,800</span></div>
+      <div class="hud-stat">⚔️ <span id="hud-atk">428</span></div>
+      <div class="hud-stat">🛡️ <span id="hud-def">215</span></div>
     </div>
   </div>
 
   <!-- 主內容 -->
-  <div class="main-content">
+  <div class="game-content">
 
-    <!-- 龍的洞穴 -->
-    <div class="panel cave-panel" id="panel-cave">
+    <!-- 角色面板 -->
+    <div class="game-panel char-panel page-section active" id="page-char">
       <div class="panel-header">
-        <span style="font-size:14px;">🏔️</span>
-        <span class="panel-title">龍 的 洞 府</span>
+        <span style="font-size:13px;">⚔️</span>
+        <span class="panel-title">角 色</span>
       </div>
       <div class="panel-body">
-        <div class="cave-layout">
-          <div class="dragon-sprite-area">
-            <div class="dragon-sprite" id="dragon-sprite">🐉</div>
-            <div class="dragon-cultivation" id="dragon-cult">◆ 築基期</div>
-            <div class="dragon-mood-badge" id="dragon-mood-badge">💚</div>
+        <div class="char-panel-layout">
+          <div class="avatar-section">
+            <div class="big-avatar" id="char-avatar">🐉</div>
+            <div class="avatar-level" id="char-level">LV 7</div>
           </div>
-          <div class="cave-info">
-            <div class="dragon-name-row">
-              <span class="dragon-name-text" id="dragon-name-gui">黑 龍</span>
-              <span class="dragon-level" id="dragon-lv">LV 7</span>
+          <div class="attr-section">
+            <div class="attr-row">
+              <div class="attr-item"><span class="attr-icon">⚔️</span><span class="attr-name">攻擊</span><span class="attr-val" id="attr-atk">428</span></div>
+              <div class="attr-item"><span class="attr-icon">🛡️</span><span class="attr-name">防禦</span><span class="attr-val" id="attr-def">215</span></div>
+              <div class="attr-item"><span class="attr-icon">💨</span><span class="attr-name">速度</span><span class="attr-val" id="attr-spd">183</span></div>
+              <div class="attr-item"><span class="attr-icon">🧠</span><span class="attr-name">智力</span><span class="attr-val" id="attr-int">392</span></div>
+              <div class="attr-item"><span class="attr-icon">⭐</span><span class="attr-name">幸運</span><span class="attr-val" id="attr-luk">67</span></div>
             </div>
-            <div class="dragon-speech-box" id="dragon-speech-gui">
-              嗨！我是黑龍。輸入訊息開始聊天~
-            </div>
-            <div class="dragon-stats-mini">
-              <div class="dragon-stat-mini">攻擊力 <span id="stat-atk">42</span></div>
-              <div class="dragon-stat-mini">防禦力 <span id="stat-def">28</span></div>
-              <div class="dragon-stat-mini">速度 <span id="stat-spd">55</span></div>
-              <div class="dragon-stat-mini">智力 <span id="stat-int">71</span></div>
+            <div class="realm-section">
+              <div class="realm-label">
+                <span>修仙境界</span>
+                <span id="realm-name" style="color:var(--purple);">築基中期</span>
+              </div>
+              <div class="realm-bar-track">
+                <div class="realm-bar-fill" id="realm-bar" style="width:55%"></div>
+              </div>
+              <div class="realm-next">下一境界：金丹初期（還需 45% 修為）</div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 技能 -->
-    <div class="panel" id="panel-skills">
+    <!-- 背包頁 -->
+    <div class="game-panel page-section" id="page-inv">
       <div class="panel-header">
-        <span style="font-size:14px;">⚡</span>
+        <span style="font-size:13px;">🎒</span>
+        <span class="panel-title">背 包</span>
+        <span style="margin-left:auto;font-size:10px;color:var(--text-dim);" id="inv-count">12/25</span>
+      </div>
+      <div class="panel-body">
+        <div style="display:flex;gap:14px;">
+          <div style="flex:1;">
+            <div style="font-size:10px;color:var(--text-dim);margin-bottom:6px;letter-spacing:2px;">道具</div>
+            <div class="inventory-grid" id="inv-grid">
+              <!-- 填充道具 -->
+              <div class="inv-slot filled"><span class="item-grade" style="color:#3498db;">藍</span>📜<span class="item-count">3</span></div>
+              <div class="inv-slot filled">💎<span class="item-count">1</span></div>
+              <div class="inv-slot filled"><span class="item-grade" style="color:#f39c12;">橙</span>⚗️<span class="item-count">5</span></div>
+              <div class="inv-slot filled">🌿<span class="item-count">8</span></div>
+              <div class="inv-slot filled"><span class="item-grade" style="color:#9b59b6;">紫</span>📿<span class="item-count">2</span></div>
+              <div class="inv-slot filled">🔮<span class="item-count">1</span></div>
+              <div class="inv-slot filled"><span class="item-grade" style="color:#e74c3c;">紅</span>⚔️<span class="item-count">1</span></div>
+              <div class="inv-slot filled">🗝️<span class="item-count">4</span></div>
+              <div class="inv-slot"></div>
+              <div class="inv-slot"></div>
+              <div class="inv-slot"></div>
+              <div class="inv-slot"></div>
+              <div class="inv-slot"></div>
+              <div class="inv-slot"></div>
+              <div class="inv-slot"></div>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--text-dim);margin-bottom:6px;letter-spacing:2px;text-align:center;">裝備</div>
+            <div class="equip-grid">
+              <div></div>
+              <div class="equip-slot armed" title="武器">⚔️<span class="equip-type">武器</span></div>
+              <div></div>
+              <div class="equip-slot armed" title="護甲">🛡️<span class="equip-type">護甲</span></div>
+              <div class="equip-slot" title="飾品"><span style="font-size:14px;color:#444;">+</span><span class="equip-type">飾品</span></div>
+              <div class="equip-slot" title="法寶"><span style="font-size:14px;color:#444;">+</span><span class="equip-type">法寶</span></div>
+              <div></div>
+              <div class="equip-slot" title="鞋子"><span style="font-size:14px;color:#444;">+</span><span class="equip-type">鞋子</span></div>
+              <div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 技能頁 -->
+    <div class="game-panel page-section" id="page-skills">
+      <div class="panel-header">
+        <span style="font-size:13px;">⚡</span>
         <span class="panel-title">魂 技</span>
       </div>
       <div class="panel-body">
-        <div class="skills-grid">
-          <button class="skill-btn" onclick="useSkill('web')">
-            <span class="skill-icon">🌐</span> 網頁搜索
-          </button>
-          <button class="skill-btn" onclick="useSkill('term')">
-            <span class="skill-icon">💻</span> 執行命令
-          </button>
-          <button class="skill-btn" onclick="useSkill('file')">
-            <span class="skill-icon">📁</span> 文件操作
-          </button>
-          <button class="skill-btn" onclick="useSkill('code')">
-            <span class="skill-icon">🤖</span> 寫代碼
-          </button>
-          <button class="skill-btn" onclick="useSkill('browser')">
-            <span class="skill-icon">🌍</span> 瀏覽器
-          </button>
-          <button class="skill-btn" onclick="useSkill('delegate')">
-            <span class="skill-icon">👥</span> 委派任務
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 雙列佈局 -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-
-      <!-- 三龍地圖 -->
-      <div class="panel" id="panel-map">
-        <div class="panel-header">
-          <span style="font-size:14px;">🗺️</span>
-          <span class="panel-title">三 龍 地 圖</span>
-        </div>
-        <div class="panel-body">
-          <div class="dragon-list">
-            <div class="dragon-node">
-              <div class="dragon-dot dot-online"></div>
-              <span>🐉 黑龍</span>
-              <span class="dragon-host">本地</span>
-              <span class="dragon-status-text online-t">在線</span>
-            </div>
-            <div class="dragon-node">
-              <div class="dragon-dot dot-sleep"></div>
-              <span>🐲 青龍</span>
-              <span class="dragon-host">本地</span>
-              <span class="dragon-status-text sleep-t">休眠</span>
-            </div>
-            <div class="dragon-node">
-              <div class="dragon-dot dot-offline"></div>
-              <span>🐡 金龍</span>
-              <span class="dragon-host">VPS</span>
-              <span class="dragon-status-text offline-t">斷線</span>
-            </div>
+        <div class="skills-grid2" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+          <div class="skill-card" onclick="useSkill('web')">
+            <div style="font-size:28px;">🌐</div>
+            <div style="font-size:12px;color:var(--text);">網頁搜索</div>
+            <div style="font-size:9px;color:var(--text-dim);">冷卻 0s</div>
           </div>
-        </div>
-      </div>
-
-      <!-- 任務 -->
-      <div class="panel" id="panel-missions">
-        <div class="panel-header">
-          <span style="font-size:14px;">🎯</span>
-          <span class="panel-title">仙 盟 任 務</span>
-        </div>
-        <div class="panel-body">
-          <div class="missions-list" id="missions-list">
-            <div class="mission-item p0">
-              <span class="priority p0">P0</span>協調鏈路修復
-            </div>
-            <div class="mission-item p1">
-              <span class="priority p1">P1</span>凡龍母體更新
-            </div>
-            <div class="mission-item done">
-              <span class="priority p2">P2</span>遊戲介面優化
-            </div>
+          <div class="skill-card" onclick="useSkill('term')">
+            <div style="font-size:28px;">💻</div>
+            <div style="font-size:12px;color:var(--text);">執行命令</div>
+            <div style="font-size:9px;color:var(--text-dim);">冷卻 0s</div>
+          </div>
+          <div class="skill-card" onclick="useSkill('file')">
+            <div style="font-size:28px;">📁</div>
+            <div style="font-size:12px;color:var(--text);">文件操作</div>
+            <div style="font-size:9px;color:var(--text-dim);">冷卻 0s</div>
+          </div>
+          <div class="skill-card" onclick="useSkill('code')">
+            <div style="font-size:28px;">🤖</div>
+            <div style="font-size:12px;color:var(--text);">寫代碼</div>
+            <div style="font-size:9px;color:var(--text-dim);">冷卻 0s</div>
+          </div>
+          <div class="skill-card" onclick="useSkill('browser')">
+            <div style="font-size:28px;">🌍</div>
+            <div style="font-size:12px;color:var(--text);">瀏覽器</div>
+            <div style="font-size:9px;color:var(--text-dim);">冷卻 0s</div>
+          </div>
+          <div class="skill-card" onclick="useSkill('delegate')">
+            <div style="font-size:28px;">👥</div>
+            <div style="font-size:12px;color:var(--text);">委派任務</div>
+            <div style="font-size:9px;color:var(--text-dim);">冷卻 0s</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 控制台 -->
-    <div class="panel console-panel" id="panel-console">
+    <!-- 任務頁 -->
+    <div class="game-panel page-section" id="page-quest">
       <div class="panel-header">
-        <span style="font-size:14px;">💬</span>
-        <span class="panel-title">與 黒 龍 對 話</span>
+        <span style="font-size:13px;">🎯</span>
+        <span class="panel-title">仙 盟 任 務</span>
       </div>
       <div class="panel-body">
-        <div class="console-output" id="console-out">🐉 等待指令...</div>
-        <div class="cmd-row">
-          <input type="text" id="cmd-input" placeholder="輸入訊息..." onkeydown="if(event.key==='Enter')sendMsg()">
-          <button class="send-btn" onclick="sendMsg()">送出</button>
+        <div class="quest-list" id="quest-list">
+          <div class="quest-item p0">
+            <span class="quest-pri p0-bg">P0</span>
+            <div>
+              <div class="quest-name">協調鏈路修復</div>
+              <div class="quest-reward">獎勵：重構經驗 ×3</div>
+            </div>
+          </div>
+          <div class="quest-item p1">
+            <span class="quest-pri p1-bg">P1</span>
+            <div>
+              <div class="quest-name">凡龍母體更新至 v2.6</div>
+              <div class="quest-reward">獎勵：法寶碎片 ×5</div>
+            </div>
+          </div>
+          <div class="quest-item p2">
+            <span class="quest-pri p2-bg">P2</span>
+            <div>
+              <div class="quest-name">遊戲介面 RPG 化改造</div>
+              <div class="quest-reward">獎勵：修為 ×500</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- 直播 -->
-    <div class="panel live-panel" id="panel-live">
+    <!-- 直播頁 -->
+    <div class="game-panel page-section" id="page-live">
       <div class="panel-header">
-        <span style="font-size:14px;">📺</span>
+        <span style="font-size:13px;">📺</span>
         <span class="panel-title">實 時 視 角</span>
-        <span id="live-status-badge" style="margin-left:auto;font-size:10px;color:#555;">● 待機中</span>
+        <span style="margin-left:auto;font-size:10px;color:#555;" id="live-status-txt">● 待機中</span>
       </div>
       <div class="panel-body">
-        <div class="live-feed">
+        <div class="live-feed-wrap">
           <img id="live-img" src="" alt="直播">
-          <div class="live-offline-overlay" id="live-offline-msg">
+          <div class="live-offline-msg" id="live-offline">
             <span>📺</span>直播畫面
           </div>
+          <div class="live-red-dot" id="live-red-dot" style="display:none;"></div>
         </div>
         <div class="live-controls">
-          <button class="send-btn" id="live-toggle-btn" onclick="toggleLive()">開啟直播</button>
-          <input type="text" class="live-url-input" id="live-url-input"
-            value="http://6b206065dce0b7ef-49-130-132-9.serveousercontent.com/api/screenshot"
-            placeholder="截圖 API URL">
+          <button class="chat-send" id="live-btn" onclick="toggleLive()">開啟直播</button>
+          <input type="text" class="live-url-input" id="live-url"
+            value="http://6b206065dce0b7ef-49-130-132-9.serveousercontent.com/api/screenshot">
         </div>
       </div>
     </div>
 
-  </div><!-- /main-content -->
+    <!-- 對話頁 -->
+    <div class="game-panel page-section" id="page-chat">
+      <div class="panel-header">
+        <span style="font-size:13px;">💬</span>
+        <span class="panel-title">黒 龍 對 話</span>
+      </div>
+      <div class="panel-body">
+        <div class="chat-output" id="chat-out">🐉 嗨！我是黒龍。修仙路漫漫，有什麼需要幫忙的嗎？</div>
+        <div class="chat-row" style="margin-top:10px;">
+          <input type="text" class="chat-input" id="chat-input" placeholder="輸入訊息..." onkeydown="if(event.key==='Enter')sendChat()">
+          <button class="chat-send" onclick="sendChat()">送出</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /game-content -->
 
   <!-- 底部導航 -->
   <div class="bottom-nav">
-    <button class="nav-btn active" onclick="switchTab('main')">🏠 首頁</button>
-    <button class="nav-btn" onclick="switchTab('skills')">⚡ 技能</button>
-    <button class="nav-btn" onclick="switchTab('map')">🗺️ 地圖</button>
-    <button class="nav-btn" onclick="switchTab('log')">📜 日誌</button>
-    <button class="nav-btn live-nav" id="live-nav-btn" onclick="toggleLivePanel()">📺 直播</button>
+    <div class="nav-tab active" onclick="switchPage('char',this)">⚔️ 角色</div>
+    <div class="nav-tab" onclick="switchPage('inv',this)">🎒 背包</div>
+    <div class="nav-tab" onclick="switchPage('skills',this)">⚡ 技能</div>
+    <div class="nav-tab" onclick="switchPage('quest',this)">🎯 任務</div>
+    <div class="nav-tab" onclick="switchPage('live',this)">📺 直播</div>
+    <div class="nav-tab" onclick="switchPage('chat',this)">💬 對話</div>
+  </div>
+
+  <!-- 技能欄 -->
+  <div class="skill-bar" id="skill-bar">
+    <div class="skill-slot" onclick="useSkill('web')">
+      <span class="skill-key">1</span>
+      <span class="skill-emoji">🌐</span>
+      <span class="skill-cd">3s</span>
+    </div>
+    <div class="skill-slot" onclick="useSkill('term')">
+      <span class="skill-key">2</span>
+      <span class="skill-emoji">💻</span>
+      <span class="skill-cd">5s</span>
+    </div>
+    <div class="skill-slot" onclick="useSkill('file')">
+      <span class="skill-key">3</span>
+      <span class="skill-emoji">📁</span>
+      <span class="skill-cd">8s</span>
+    </div>
+    <div class="skill-slot" onclick="useSkill('code')">
+      <span class="skill-key">4</span>
+      <span class="skill-emoji">🤖</span>
+      <span class="skill-cd">15s</span>
+    </div>
+    <div class="skill-slot" onclick="useSkill('browser')">
+      <span class="skill-key">5</span>
+      <span class="skill-emoji">🌍</span>
+      <span class="skill-cd">10s</span>
+    </div>
+    <div class="skill-slot" onclick="useSkill('delegate')">
+      <span class="skill-key">6</span>
+      <span class="skill-emoji">👥</span>
+      <span class="skill-cd">30s</span>
+    </div>
   </div>
 </div><!-- /game-screen -->
 
+<!-- 技能卡片樣式（共享） -->
+<style>
+.skill-card {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.skill-card:hover {
+  border-color: var(--gold-dark);
+  background: rgba(201,168,76,0.05);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(201,168,76,0.1);
+}
+</style>
+
 <script>
-// ═══ 全域狀態 ═══
-let DRAGON_MOODS = ['💚 心情平靜', '💙 專注工作', '💛 好奇探索', '🧡 輕鬆悠閒', '💜 若有所思'];
-let SPEECHES = ['有什麼需要幫忙的嗎？', '我在聽，說吧！', '想到了什麼就問我~', '準備好了，隨時可以開始！'];
-let moodIdx = 0;
-let speechIdx = 0;
-let liveActive = false;
-let liveTimer = null;
+// ═══ 通知系統 ═══
+// 延遲建立粒子效果
+function createParticles() {
+  const container = document.getElementById('particles');
+  if (!container) return;
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (8 + Math.random() * 12) + 's';
+    p.style.animationDelay = Math.random() * 10 + 's';
+    p.style.width = (1 + Math.random() * 2) + 'px';
+    p.style.height = p.style.width;
+    container.appendChild(p);
+  }
+}
+setTimeout(createParticles, 100);
 
 // ═══ 登入 ═══
 function doLogin() {
@@ -841,63 +998,77 @@ function doLogin() {
   })
   .then(r => r.json())
   .then(d => {
-    if (d.ok) {
-      document.getElementById("login-screen").style.display = "none";
-      document.getElementById("game-screen").style.display = "block";
-      loadStatus();
-      startBreathing();
-    } else {
-      document.getElementById("login-error").textContent = "※ 密碼錯誤";
-    }
+    if (d.ok) enterGame();
+    else document.getElementById("login-error").textContent = "※ 密碼錯誤";
   })
-  .catch(() => {
-    // 網關模式：fallback 直接過
-    document.getElementById("login-screen").style.display = "none";
-    document.getElementById("game-screen").style.display = "block";
-    loadStatus();
-    startBreathing();
-  });
+  .catch(() => enterGame()); // fallback
 }
 
-// ═══ 載入狀態 ═══
+function enterGame() {
+  document.getElementById("login-screen").style.display = "none";
+  document.getElementById("game-screen").style.display = "block";
+  loadStatus();
+  showNotif("🐉 黒龍修仙", "歡迎回來，修仙者！", "success");
+}
+
+// ═══ 通知 ═══
+function showNotif(title, msg, type='success') {
+  const layer = document.getElementById('notif-layer');
+  const n = document.createElement('div');
+  n.className = 'notif ' + type;
+  n.innerHTML = '<strong>' + title + '</strong><br>' + msg;
+  layer.appendChild(n);
+  setTimeout(() => n.remove(), 3000);
+}
+
+// ═══ 狀態載入 ═══
 function loadStatus() {
   fetch("/api/status", { credentials: "include" })
     .then(r => r.json())
     .then(d => {
-      document.getElementById("dragon-status-top").textContent = "◈ " + d.status;
-      document.getElementById("hp-num-top").textContent = d.hp + "%";
-      document.getElementById("ap-num-top").textContent = d.ap + "%";
-      document.getElementById("hp-bar-top").style.width = d.hp + "%";
-      document.getElementById("ap-bar-top").style.width = d.ap + "%";
+      document.getElementById("hp-num").textContent = d.hp + "/" + d.hp_max;
+      document.getElementById("mp-num").textContent = d.mp + "/" + d.mp_max;
+      document.getElementById("xp-num").textContent = d.xp + "/" + d.xp_max;
+      document.getElementById("hp-bar").style.width = (d.hp / d.hp_max * 100) + "%";
+      document.getElementById("mp-bar").style.width = (d.mp / d.mp_max * 100) + "%";
+      document.getElementById("xp-bar").style.width = (d.xp / d.xp_max * 100) + "%";
     })
-    .catch(() => {});
+    .catch(() => {
+      // 保持預設值
+    });
 }
 
-// ═══ 龍的呼吸動畫 ═══
-function startBreathing() {
-  setInterval(() => {
-    moodIdx = (moodIdx + 1) % DRAGON_MOODS.length;
-    speechIdx = (speechIdx + 1) % SPEECHES.length;
-    document.getElementById("dragon-mood-badge").textContent = DRAGON_MOODS[moodIdx].split(' ')[0];
-    document.getElementById("dragon-speech-gui").textContent = SPEECHES[speechIdx];
-  }, 6000);
+// ═══ 分頁切換 ═══
+function switchPage(name, el) {
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
 }
 
 // ═══ 技能 ═══
 function useSkill(type) {
   const names = { web:'網頁搜索', term:'執行命令', file:'文件操作', code:'寫代碼', browser:'瀏覽器', delegate:'委派任務' };
-  document.getElementById("console-out").textContent = "⚡ 技能【" + names[type] + "】已啟動...\n請在下方輸入具體指令";
+  showNotif('⚡ ' + names[type], '技能已啟動，請在對話框輸入具體指令', 'success');
+  // 技能圖標動畫
+  const slots = document.querySelectorAll('.skill-slot');
+  const idx = ['web','term','file','code','browser','delegate'].indexOf(type);
+  if (idx >= 0 && slots[idx]) {
+    slots[idx].classList.add('active');
+    setTimeout(() => slots[idx].classList.remove('active'), 500);
+  }
+  switchPage('chat', document.querySelectorAll('.nav-tab')[5]);
+  document.getElementById('chat-input').focus();
 }
 
 // ═══ 對話 ═══
-function sendMsg() {
-  const input = document.getElementById("cmd-input");
+function sendChat() {
+  const input = document.getElementById("chat-input");
   const msg = input.value.trim();
   if (!msg) return;
-  const out = document.getElementById("console-out");
-  out.textContent = "▶ " + msg + "\n\n⏳ 黑龍思考中...";
+  const out = document.getElementById("chat-out");
+  out.textContent = "▶ " + msg + "\n\n⏳ 黒龍推演中...";
   input.value = "";
-
   fetch("/api/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -906,30 +1077,22 @@ function sendMsg() {
   })
   .then(r => r.json())
   .then(d => { out.textContent = "▶ " + msg + "\n\n🐉 " + (d.reply || d.response || "（無回應）"); })
-  .catch(() => {
-    out.textContent = "▶ " + msg + "\n\n⚠ 連線失敗，請確認黑龍服務運行中";
-  });
+  .catch(() => { out.textContent = "▶ " + msg + "\n\n⚠ 連線失敗"; });
 }
 
 // ═══ 直播 ═══
-function toggleLivePanel() {
-  const panel = document.getElementById("panel-live");
-  const navBtn = document.getElementById("live-nav-btn");
-  panel.classList.toggle("show");
-  navBtn.classList.toggle("active");
-  if (panel.classList.contains("show") && !liveActive) {
-    // auto-start when opening
-  }
-}
+let liveActive = false;
+let liveTimer = null;
 
 function toggleLive() {
   if (!liveActive) {
     liveActive = true;
-    document.getElementById("live-toggle-btn").textContent = "關閉直播";
-    document.getElementById("live-offline-msg").style.display = "none";
-    document.getElementById("live-status-badge").textContent = "● 直播中";
-    document.getElementById("live-status-badge").style.color = "#4f4";
-    const url = document.getElementById("live-url-input").value;
+    document.getElementById("live-btn").textContent = "關閉直播";
+    document.getElementById("live-offline").style.display = "none";
+    document.getElementById("live-red-dot").style.display = "block";
+    document.getElementById("live-status-txt").textContent = "● 直播中";
+    document.getElementById("live-status-txt").style.color = "#e74c3c";
+    const url = document.getElementById("live-url").value;
     liveTimer = setInterval(() => {
       const img = document.getElementById("live-img");
       img.src = url + "?t=" + Date.now();
@@ -937,61 +1100,23 @@ function toggleLive() {
   } else {
     liveActive = false;
     clearInterval(liveTimer);
-    document.getElementById("live-toggle-btn").textContent = "開啟直播";
-    document.getElementById("live-offline-msg").style.display = "flex";
-    document.getElementById("live-status-badge").textContent = "● 待機中";
-    document.getElementById("live-status-badge").style.color = "#555";
+    document.getElementById("live-btn").textContent = "開啟直播";
+    document.getElementById("live-offline").style.display = "flex";
+    document.getElementById("live-red-dot").style.display = "none";
+    document.getElementById("live-status-txt").textContent = "● 待機中";
+    document.getElementById("live-status-txt").style.color = "#555";
   }
 }
 
-// ═══ 分頁切換（底導航） ═══
-function switchTab(tab) {
-  document.querySelectorAll(".nav-btn").forEach(b => {
-    if (b.id !== "live-nav-btn") b.classList.remove("active");
-  });
-  event.target.classList.add("active");
-
-  // 所有面板先顯示，再根據 tab 隱藏
-  document.querySelectorAll(".panel").forEach(p => p.style.display = "");
-
-  if (tab === "main") {
-    // 顯示洞穴+技能+地圖+任務+控制台
-    document.getElementById("panel-cave").style.display = "";
-    document.getElementById("panel-skills").style.display = "";
-    document.getElementById("panel-map").style.display = "none";
-    document.getElementById("panel-missions").style.display = "none";
-    document.getElementById("panel-console").style.display = "";
-    document.getElementById("panel-live").classList.remove("show");
-    document.getElementById("live-nav-btn").classList.remove("active");
-  } else if (tab === "skills") {
-    document.getElementById("panel-cave").style.display = "none";
-    document.getElementById("panel-skills").style.display = "";
-    document.getElementById("panel-map").style.display = "none";
-    document.getElementById("panel-missions").style.display = "none";
-    document.getElementById("panel-console").style.display = "none";
-    document.getElementById("panel-live").classList.remove("show");
-    document.getElementById("live-nav-btn").classList.remove("active");
-  } else if (tab === "map") {
-    document.getElementById("panel-cave").style.display = "none";
-    document.getElementById("panel-skills").style.display = "none";
-    document.getElementById("panel-map").style.display = "";
-    document.getElementById("panel-missions").style.display = "";
-    document.getElementById("panel-console").style.display = "none";
-    document.getElementById("panel-live").classList.remove("show");
-    document.getElementById("live-nav-btn").classList.remove("active");
-  } else if (tab === "log") {
-    document.getElementById("panel-cave").style.display = "none";
-    document.getElementById("panel-skills").style.display = "none";
-    document.getElementById("panel-map").style.display = "none";
-    document.getElementById("panel-missions").style.display = "none";
-    document.getElementById("panel-console").style.display = "";
-    document.getElementById("panel-live").classList.remove("show");
-    document.getElementById("live-nav-btn").classList.remove("active");
-  }
-}
-
-// 初始化：顯示首頁
-switchTab('main');
+// 預設：聊天頁 focus
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    const loginScreen = document.getElementById('login-screen');
+    if (loginScreen && loginScreen.style.display !== 'none') {
+      document.getElementById('pwd-input').focus();
+    }
+  }, 100);
+});
 </script>
 </body>
 </html>
